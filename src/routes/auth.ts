@@ -1,4 +1,4 @@
-// Auth Routes
+// Auth Routes - FashionKas
 import { Hono } from 'hono'
 import { createSupabaseClient, createJWT, verifyJWT, hashPin } from '../lib/supabase'
 
@@ -40,7 +40,15 @@ authRoutes.post('/register', async (c) => {
     
     return c.json({
       success: true,
-      data: { token, store: { id: store.id, name: store.name, slug: store.slug, tier: store.subscription_tier } },
+      data: {
+        token,
+        store: {
+          id: store.id, name: store.name, slug: store.slug,
+          tier: store.subscription_tier, city: store.city,
+          owner_name: store.owner_name, owner_phone: store.owner_phone,
+          description: store.description
+        }
+      },
       message: 'Toko berhasil didaftarkan!'
     })
   } catch (e: any) {
@@ -59,7 +67,6 @@ authRoutes.post('/login', async (c) => {
     const db = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY)
     const pinHash = await hashPin(pin)
     
-    // Find store by phone and PIN
     const stores = await db.query('stores', {
       eq: [['owner_phone', phone], ['pin_code', pinHash]],
       limit: 1
@@ -74,7 +81,15 @@ authRoutes.post('/login', async (c) => {
     
     return c.json({
       success: true,
-      data: { token, store: { id: store.id, name: store.name, slug: store.slug, tier: store.subscription_tier, city: store.city } },
+      data: {
+        token,
+        store: {
+          id: store.id, name: store.name, slug: store.slug,
+          tier: store.subscription_tier, city: store.city,
+          owner_name: store.owner_name, owner_phone: store.owner_phone,
+          description: store.description
+        }
+      },
       message: 'Login berhasil!'
     })
   } catch (e: any) {
@@ -82,7 +97,7 @@ authRoutes.post('/login', async (c) => {
   }
 })
 
-// Verify token
+// Verify token / get current store
 authRoutes.get('/me', async (c) => {
   try {
     const auth = c.req.header('Authorization')
@@ -101,9 +116,87 @@ authRoutes.get('/me', async (c) => {
     const store = stores[0]
     return c.json({
       success: true,
-      data: { store: { id: store.id, name: store.name, slug: store.slug, tier: store.subscription_tier, city: store.city, owner_name: store.owner_name } }
+      data: {
+        store: {
+          id: store.id, name: store.name, slug: store.slug,
+          tier: store.subscription_tier, city: store.city,
+          owner_name: store.owner_name, owner_phone: store.owner_phone,
+          description: store.description
+        }
+      }
     })
   } catch (e: any) {
     return c.json({ success: false, message: e.message || 'Auth failed' }, 401)
+  }
+})
+
+// Update store profile
+authRoutes.put('/store', async (c) => {
+  try {
+    const auth = c.req.header('Authorization')
+    if (!auth) return c.json({ success: false, message: 'No token' }, 401)
+    
+    const token = auth.replace('Bearer ', '')
+    const payload = await verifyJWT(token, c.env.JWT_SECRET)
+    
+    const body = await c.req.json()
+    const db = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY)
+    
+    const updateData: any = {}
+    if (body.name !== undefined) updateData.name = body.name
+    if (body.description !== undefined) updateData.description = body.description
+    if (body.city !== undefined) updateData.city = body.city
+    if (body.owner_name !== undefined) updateData.owner_name = body.owner_name
+    
+    const [updated] = await db.update('stores', payload.store_id, updateData)
+    
+    return c.json({
+      success: true,
+      data: {
+        store: {
+          id: updated.id, name: updated.name, slug: updated.slug,
+          tier: updated.subscription_tier, city: updated.city,
+          owner_name: updated.owner_name, owner_phone: updated.owner_phone,
+          description: updated.description
+        }
+      },
+      message: 'Profil toko berhasil diupdate!'
+    })
+  } catch (e: any) {
+    return c.json({ success: false, message: e.message || 'Update failed' }, 500)
+  }
+})
+
+// Change PIN
+authRoutes.put('/change-pin', async (c) => {
+  try {
+    const auth = c.req.header('Authorization')
+    if (!auth) return c.json({ success: false, message: 'No token' }, 401)
+    
+    const token = auth.replace('Bearer ', '')
+    const payload = await verifyJWT(token, c.env.JWT_SECRET)
+    
+    const { current_pin, new_pin } = await c.req.json()
+    if (!current_pin || !new_pin) return c.json({ success: false, message: 'PIN lama dan baru wajib diisi' }, 400)
+    if (new_pin.length < 4) return c.json({ success: false, message: 'PIN baru minimal 4 digit' }, 400)
+    
+    const db = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY)
+    const currentHash = await hashPin(current_pin)
+    
+    const stores = await db.query('stores', {
+      eq: [['id', payload.store_id], ['pin_code', currentHash]],
+      limit: 1
+    })
+    
+    if (!stores || stores.length === 0) {
+      return c.json({ success: false, message: 'PIN lama salah' }, 401)
+    }
+    
+    const newHash = await hashPin(new_pin)
+    await db.update('stores', payload.store_id, { pin_code: newHash })
+    
+    return c.json({ success: true, message: 'PIN berhasil diubah!' })
+  } catch (e: any) {
+    return c.json({ success: false, message: e.message || 'Change PIN failed' }, 500)
   }
 })
