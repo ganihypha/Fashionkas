@@ -3,5 +3,12 @@
   "name": "fashionkas",
   "compatibility_date": "2024-01-01",
   "pages_build_output_dir": "./dist",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "SUPABASE_URL": "https://pavkyexnqzfmdrbfzoht.supabase.co",
+    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBhdmt5ZXhucXpmbWRyYmZ6b2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NjU0ODYsImV4cCI6MjA4OTM0MTQ4Nn0.jH30IqSCwHKCGptCVjgReQNgZOCz1iV3qcGsvUAsQAo",
+    "SUPABASE_SERVICE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBhdmt5ZXhucXpmbWRyYmZ6b2h0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzc2NTQ4NiwiZXhwIjoyMDg5MzQxNDg2fQ.L1GSyPEEMhLI0XTw0Gsw7dkm10Nv0vmAxiRBNnpXmZY",
+    "JWT_SECRET": "sovereign-fashionkas-jwt-secret-2026",
+    "SCRAPERAPI_KEY": "abbea25987be4ae29c8fe7f4ee0d1ea7"
+  }
 }
