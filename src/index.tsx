@@ -40,7 +40,7 @@ app.route('/api/customers', customerRoutes)
 app.route('/api/dashboard', dashboardRoutes)
 
 // Health check
-app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '1.0.0' }))
+app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '1.1.0' }))
 
 // === PAGE ROUTES ===
 // Landing page

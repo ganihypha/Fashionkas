@@ -1,191 +1,127 @@
-# FashionKas - Katalog + Kasir Digital untuk Fashion Reseller Indonesia
+# FashionKas v1.1.0
 
-## Project Overview
-- **Name**: FashionKas
-- **Goal**: Kasir Digital + Katalog Online + WA Automation untuk Fashion Reseller Indonesia
-- **Target**: 10+ juta reseller fashion online di Indonesia yang masih jualan manual via WhatsApp
-- **Version**: 1.0.0-beta
-- **Parent Platform**: Sovereign Empire
+> Kasir Digital + Katalog Online + WA Automation untuk Fashion Reseller Indonesia
 
 ## URLs
 - **Production**: https://fashionkas.pages.dev
-- **Sandbox**: https://3000-inaugkt3jfm8iuad5sesr-b9b802c4.sandbox.novita.ai
 - **GitHub**: https://github.com/ganihypha/Fashionkas
+- **Public Catalog**: https://fashionkas.pages.dev/catalog/{store_slug}
 
-## Features (Completed v1.0)
+## Features (v1.1.0)
 
-### Landing Page (/)
-- Hero section with beta CTA and animated logo
-- How-it-works 3-step explanation
-- Demo catalog preview showing product grid with WA order buttons
-- 6 feature cards (Katalog Digital, WA Automation, Kasir Digital, Dashboard, Track Stok, Kelola Pesanan)
-- 3-tier pricing (Starter FREE, Basic Rp 99K, Pro Rp 149K) with beta promotion
-- Competitor comparison section
-- Final CTA with registration link
+### Auth System
+- **PIN-based login** (phone + 4-6 digit PIN, SHA-256 hashed)
+- **3-step registration wizard** (Store Info > Owner Info > PIN Setup)
+- **JWT token** (30-day expiry) with auto-redirect for logged-in users
+- **Change PIN** with old PIN verification
 
-### Authentication
-- **Register** (/register) - Store name, owner name, WhatsApp number, city, 4-6 digit PIN
-- **Login** (/login) - Phone + PIN authentication
-- **JWT-based auth** - 30-day tokens, SHA-256 PIN hashing
-- **Store Profile Update** (PUT /api/auth/store) - Edit store name, description, owner, city
-- **Change PIN** (PUT /api/auth/change-pin) - Current PIN verification + new PIN
-
-### Dashboard (/fashionkas/dashboard)
-- Quick stats row (monthly revenue, today's income, monthly profit, total products)
-- Today's highlight (revenue, orders, items sold, profit)
-- **Chart.js 7-day revenue chart** (bar chart with revenue + profit)
-- Top 5 selling products with revenue
-- Low stock + out of stock alerts
-- Category breakdown with colored badges
-- Recent orders (last 5) with status badges
-- Quick action cards (add product, create order, view orders, settings)
-
-### Kasir / POS (/fashionkas/sale)
-- Customer info input (name + WhatsApp)
-- Product search with category filter pills
-- Product grid with stock info and in-cart indicators
-- Cart with quantity controls (+/-) and remove
-- Summary: subtotal, discount, shipping, total, estimated profit
-- 4 payment methods: Cash, Transfer, COD, Marketplace
-- WhatsApp receipt toggle + manual WA send
+### POS / Kasir (`/fashionkas/sale`)
+- Product grid with **image thumbnails** and category badges
+- **Size/Color variant picker** modal for products with options
+- Cart with per-item image, size, color display
+- **Quick discount** (5K, 10K) and **quick shipping** (10K, 15K) buttons
+- Multiple payment: Cash, Transfer, COD, Marketplace
+- WhatsApp receipt with variant details (size/color)
 - Auto stock deduction on order save
-- Auto customer creation/update
+- Grid/list view toggle
 
-### Catalog Management (/fashionkas/catalog)
-- Stats bar (total, active, low stock, out of stock)
-- Search + category filter dropdown
-- Product cards with category badge, profit %, sizes, stock, sold count
-- Add product modal (name, category, price, cost price, stock, sizes, colors, image URL, description)
-- Edit product modal (pre-filled)
-- Delete product with confirmation
-- Share catalog via WhatsApp button
+### Catalog Management (`/fashionkas/catalog`)
+- Product grid with **image preview** (fallback to colored icons)
+- **Inventory value** calculator (total stock value + est. profit)
+- **Sort options**: Terbaru, Harga, Stok, Terlaris
+- **Featured product** toggle (star badge)
+- **Profit calculator** in add/edit modal (auto-compute margin %)
+- **Quick size presets** (S-XL, All Size, S-3XL) and **quick color presets** (B&W, Gelap, Pastel)
+- Image URL preview in modal
 
-### Order Management (/fashionkas/orders)
-- Monthly summary cards (revenue, orders, profit)
-- **5 status tabs**: All, Pending, Processing, Shipped, Delivered (with counts)
-- Order cards with customer avatar, items, amount, profit, payment status
-- Order detail modal with full breakdown
-- **Workflow buttons**: Pending > Process > Ship+Resi > Delivered
-- **Tracking/resi input modal** for shipping
-- Mark as paid button
-- WA Customer button with pre-filled status message
+### Dashboard (`/fashionkas/dashboard`)
+- Revenue chart (Chart.js bar, 7-day, revenue + profit)
+- Today's highlight (revenue, orders, items sold, profit)
+- Monthly stats with profit margin %
+- Top 5 products by sales
+- Low stock + out-of-stock alerts
+- Category breakdown
+- Recent orders with status badges
 
-### Settings (/fashionkas/settings)
-- **Editable store profile** (name, description, owner, city) with save/cancel
-- Catalog URL with copy button
-- Share to WhatsApp and general share (navigator.share)
-- Social links (Instagram @nurulannisaff, GitHub ganihypha)
-- **Change PIN** with current PIN verification
-- App info (version, platform, database, status)
-- Beta features list
-- Logout
+### Orders (`/fashionkas/orders`)
+- Status tabs: All, Pending, Processing, Shipped, Delivered
+- Order detail modal with items, totals, profit
+- Tracking/resi input
+- WhatsApp notification button
+- Monthly summary (revenue, orders, profit)
 
-### Public Catalog (/catalog/:slug)
-- No auth required - customer-facing
-- Store header with name, description, WA chat button
-- Search and category filter pills (auto-generated)
-- Product grid with images, sizes, prices
-- **Product detail modal** (tap product for full view with sizes, colors, description)
-- "Pesan via WA" button with pre-filled order message
-- Stock indicators (low stock / out of stock)
-- Floating WhatsApp button
+### Settings (`/fashionkas/settings`)
+- Editable store profile (name, description, owner, city)
+- Catalog sharing (copy link, WhatsApp, native share)
+- **Fonnte WhatsApp Automation** guide (setup instructions)
+- **CSV Export** for Products, Orders, Customers
+- Change PIN
+- Social links (Instagram, GitHub)
+
+### Public Catalog (`/catalog/:slug`)
+- Mobile-optimized product browsing
+- Product detail modal with WhatsApp order link
+- Search + category filter
 - OG meta tags for social sharing
-- Footer with FashionKas branding + "Buat katalog sendiri" CTA
+- Store info header with avatar
+
+### Landing Page (`/`)
+- Demo catalog preview with 4 products
+- 3-tier pricing (Free, Basic Rp 99K, Pro Rp 149K)
+- How-it-works steps
+- Competitor comparison
+- Beta promotion badge
 
 ## API Endpoints
 
-### Auth
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | /api/auth/register | Register new store | No |
-| POST | /api/auth/login | Login with phone+PIN | No |
-| GET | /api/auth/me | Get current store info | JWT |
-| PUT | /api/auth/store | Update store profile | JWT |
-| PUT | /api/auth/change-pin | Change PIN | JWT |
-
-### Products
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | /api/products | List store products | JWT |
-| POST | /api/products | Create product | JWT |
-| PUT | /api/products/:id | Update product | JWT |
-| DELETE | /api/products/:id | Delete product | JWT |
-| GET | /api/products/public/:slug | Public catalog | No |
-
-### Orders
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | /api/orders | List orders (with items) | JWT |
-| POST | /api/orders | Create order (+ stock deduct) | JWT |
-| PUT | /api/orders/:id | Update status/tracking | JWT |
-
-### Customers
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | /api/customers | List customers | JWT |
-| POST | /api/customers | Create customer | JWT |
-
-### Dashboard
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | /api/dashboard/stats | Full dashboard data | JWT |
-
-### Other
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/health | Health check |
-
-## Data Architecture
-- **Database**: Supabase PostgreSQL (5 tables: stores, products, orders, order_items, customers)
-- **Authentication**: JWT + SHA-256 PIN hashing (Web Crypto API)
-- **Data Isolation**: All queries filtered by store_id from JWT
-- **Row Level Security**: Enabled on all tables with service-role policies
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/auth/register` | No | Register new store |
+| POST | `/api/auth/login` | No | Login with phone + PIN |
+| GET | `/api/auth/me` | Yes | Get current store info |
+| PUT | `/api/auth/store` | Yes | Update store profile |
+| PUT | `/api/auth/change-pin` | Yes | Change PIN |
+| GET | `/api/products` | Yes | List store products |
+| POST | `/api/products` | Yes | Create product |
+| PUT | `/api/products/:id` | Yes | Update product |
+| DELETE | `/api/products/:id` | Yes | Delete product |
+| GET | `/api/products/public/:slug` | No | Public catalog |
+| GET | `/api/orders` | Yes | List orders |
+| POST | `/api/orders` | Yes | Create order + stock deduction |
+| PUT | `/api/orders/:id` | Yes | Update order status |
+| GET | `/api/customers` | Yes | List customers |
+| POST | `/api/customers` | Yes | Create customer |
+| GET | `/api/dashboard/stats` | Yes | Dashboard statistics |
+| GET | `/api/health` | No | Health check |
 
 ## Tech Stack
-- **Frontend**: Hono SSR + Tailwind CSS (CDN) + Vanilla JS + Chart.js
-- **Backend**: Hono v4 + TypeScript
-- **Runtime**: Cloudflare Workers (Edge)
-- **Hosting**: Cloudflare Pages
-- **Database**: Supabase PostgreSQL
-- **Fonts**: Inter, Montserrat, JetBrains Mono
-- **Icons**: Font Awesome 6.5.1
+- **Backend**: Hono v4 + TypeScript on Cloudflare Workers
+- **Frontend**: Vanilla JS + Tailwind CSS (CDN) + Font Awesome
+- **Database**: Supabase PostgreSQL (REST API)
+- **Auth**: PIN + SHA-256 + JWT (Web Crypto API)
+- **Charts**: Chart.js
+- **WhatsApp**: Fonnte API (optional) + wa.me deep links
+- **Deployment**: Cloudflare Pages
+
+## Data Architecture
+- **stores**: id, name, slug, owner_name, owner_phone, pin_code, city, description, subscription_tier
+- **products**: id, store_id, name, category, price, cost_price, stock, total_sold, sizes[], colors[], image_url, description, is_active, is_featured
+- **orders**: id, store_id, order_number, customer_name, customer_phone, total_amount, total_profit, discount, shipping_cost, payment_method, payment_status, shipping_status, tracking_number, notes
+- **order_items**: id, order_id, product_id, product_name, quantity, unit_price, cost_price, size, color, subtotal
+- **customers**: id, store_id, name, phone, total_orders, total_spent, segment, last_order_at
 
 ## Deployment
 - **Platform**: Cloudflare Pages
-- **Status**: LIVE
-- **Production URL**: https://fashionkas.pages.dev
-- **Project Name**: fashionkas
-- **Build**: Vite SSR (180 KB worker)
-- **Last Updated**: 2026-03-17
+- **Status**: Active
+- **Version**: 1.1.0
+- **Last Updated**: 2026-03-18
 
-## User Guide
-
-### For Nurul Annisa (First User)
-1. Open https://fashionkas.pages.dev/register
-2. Register: store name "Nurul Fashion", owner name, WhatsApp number, PIN
-3. Go to **Katalog** tab > **+Tambah** > add products (name, price, category, stock)
-4. Go to **Jual** tab > select products > fill customer info > save order
-5. Go to **Settings** > **Share WhatsApp** to send catalog link to customers
-6. Customers open your catalog link, browse products, click "Pesan via WA"
-
-### For Sellers
-1. **Register**: 30 seconds with phone + PIN
-2. **Add Products**: Name, price, category, stock, image URL
-3. **Create Orders**: Select products, customer info, payment method
-4. **Share Catalog**: One link to all customers via WhatsApp
-5. **Track Everything**: Dashboard shows revenue, profit, top products
-
-## Next Steps (Phase 2)
-- [ ] Fonnte WhatsApp automation (auto order confirmation, shipping notification)
-- [ ] Image upload via Cloudflare R2
-- [ ] Scout Agent (find fashion stores via SerpAPI/Google Maps)
-- [ ] Closer Agent (auto WA outreach)
-- [ ] Weekly sales report via WhatsApp
-- [ ] Export data to CSV/PDF
-- [ ] Multi-store support
-- [ ] Payment integration
-- [ ] GitHub repository push (auth pending)
-
----
-*FashionKas v1.0.0-beta | Sovereign Empire | Built with GenSpark.AI*
-*"Katalog cantik dalam 5 menit. Jualan makin gampang."*
+## Phase 2 Roadmap (Pending)
+- [ ] Fonnte WhatsApp automation (auto-send receipt, shipping updates, promos)
+- [ ] Image upload via Cloudflare R2 (in-app camera/gallery)
+- [ ] Scout AI Agent (lead scoring from Google Maps)
+- [ ] Closer AI Agent (WhatsApp outreach templates)
+- [ ] Multi-store management
+- [ ] Advanced analytics & PDF reports
+- [ ] Supplier catalog sync
+- [ ] Push notifications
