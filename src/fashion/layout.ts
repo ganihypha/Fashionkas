@@ -1,4 +1,5 @@
-// FashionKas Layout Component
+// FashionKas Layout Component v1.2
+// Updated nav with WA Automation, Reports, Scout & Closer AI
 export function fashionLayout(title: string, content: string, activeNav?: string): string {
   return `<!DOCTYPE html>
 <html lang="id">
@@ -6,7 +7,7 @@ export function fashionLayout(title: string, content: string, activeNav?: string
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title} | FashionKas</title>
-  <meta name="description" content="Katalog + Kasir Digital untuk Fashion Reseller Indonesia.">
+  <meta name="description" content="Katalog + Kasir Digital + AI Agent untuk Fashion Reseller Indonesia.">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -36,6 +37,8 @@ export function fashionLayout(title: string, content: string, activeNav?: string
     .wa-btn:hover { background: #1da851; }
     .wa-pulse { animation: waPulse 2s infinite; }
     @keyframes waPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.4); } 50% { box-shadow: 0 0 0 8px rgba(37,211,102,0); } }
+    .ai-glow { animation: aiGlow 3s infinite; }
+    @keyframes aiGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.3); } 50% { box-shadow: 0 0 0 6px rgba(168,85,247,0); } }
     .status-pending { background: rgba(245,158,11,0.15); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
     .status-processing { background: rgba(59,130,246,0.15); color: #3B82F6; border: 1px solid rgba(59,130,246,0.3); }
     .status-shipped { background: rgba(6,182,212,0.15); color: #06B6D4; border: 1px solid rgba(6,182,212,0.3); }
@@ -46,6 +49,15 @@ export function fashionLayout(title: string, content: string, activeNav?: string
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 100; padding: 12px 24px; border-radius: 12px; font-size: 13px; transition: all 0.3s; }
     .toast.success { background: rgba(16,185,129,0.9); color: white; }
     .toast.error { background: rgba(239,68,68,0.9); color: white; }
+    .toast.info { background: rgba(59,130,246,0.9); color: white; }
+    .more-menu { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px; background: rgba(26,26,46,0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 8px; min-width: 200px; z-index: 70; box-shadow: 0 -8px 32px rgba(0,0,0,0.5); }
+    .more-menu.show { display: block; animation: slideUp 0.2s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    .more-menu a { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; transition: all 0.15s; }
+    .more-menu a:hover { background: rgba(168,85,247,0.1); }
+    .desktop-nav a { position: relative; padding: 6px 12px; border-radius: 8px; font-size: 12px; transition: all 0.2s; }
+    .desktop-nav a:hover { background: rgba(168,85,247,0.1); }
+    .desktop-nav a.active { background: rgba(168,85,247,0.15); color: #A855F7; }
   </style>
 </head>
 <body class="min-h-screen pb-20 md:pb-0">
@@ -61,6 +73,17 @@ export function fashionLayout(title: string, content: string, activeNav?: string
             <span class="text-fk-purple">Fashion</span>Kas
           </span>
         </a>
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-1 desktop-nav">
+          <a href="/fashionkas/dashboard" class="${activeNav === 'dashboard' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-chart-pie mr-1"></i>Dashboard</a>
+          <a href="/fashionkas/catalog" class="${activeNav === 'catalog' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-images mr-1"></i>Katalog</a>
+          <a href="/fashionkas/sale" class="${activeNav === 'sale' ? 'active text-fk-purple' : 'text-gray-400'}"><i class="fa-solid fa-cash-register mr-1"></i>Kasir</a>
+          <a href="/fashionkas/orders" class="${activeNav === 'orders' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-box mr-1"></i>Pesanan</a>
+          <a href="/fashionkas/wa" class="${activeNav === 'wa' ? 'active' : 'text-gray-400'}"><i class="fa-brands fa-whatsapp mr-1"></i>WA</a>
+          <a href="/fashionkas/scout" class="${activeNav === 'scout' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-binoculars mr-1"></i>Scout</a>
+          <a href="/fashionkas/closer" class="${activeNav === 'closer' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-bullseye mr-1"></i>Closer</a>
+          <a href="/fashionkas/reports" class="${activeNav === 'reports' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-chart-bar mr-1"></i>Laporan</a>
+        </div>
         <div class="flex items-center gap-3">
           <a href="/fashionkas/settings" class="text-xs text-gray-400 hover:text-white">
             <i class="fa-solid fa-gear"></i>
@@ -100,10 +123,33 @@ export function fashionLayout(title: string, content: string, activeNav?: string
         <i class="fa-solid fa-box text-lg"></i>
         <span class="text-[10px]">Pesanan</span>
       </a>
-      <a href="/fashionkas/settings" class="flex flex-col items-center gap-0.5 ${activeNav === 'settings' ? 'text-fk-purple' : 'text-gray-500'}">
-        <i class="fa-solid fa-gear text-lg"></i>
-        <span class="text-[10px]">Setting</span>
-      </a>
+      <div class="relative flex flex-col items-center gap-0.5 cursor-pointer ${['wa','scout','closer','reports','settings'].includes(activeNav || '') ? 'text-fk-purple' : 'text-gray-500'}" onclick="toggleMore(event)">
+        <i class="fa-solid fa-ellipsis text-lg"></i>
+        <span class="text-[10px]">Lainnya</span>
+        <!-- More Menu Popup -->
+        <div id="moreMenu" class="more-menu">
+          <a href="/fashionkas/wa" class="${activeNav === 'wa' ? 'text-green-400' : 'text-gray-300'}">
+            <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center"><i class="fa-brands fa-whatsapp text-green-400"></i></div>
+            <div><p class="font-medium">WA Automation</p><p class="text-[10px] text-gray-500">Struk, notif, broadcast</p></div>
+          </a>
+          <a href="/fashionkas/scout" class="${activeNav === 'scout' ? 'text-fk-purple' : 'text-gray-300'}">
+            <div class="w-8 h-8 rounded-lg bg-fk-purple/10 flex items-center justify-center"><i class="fa-solid fa-binoculars text-fk-purple"></i></div>
+            <div><p class="font-medium">Scout AI</p><p class="text-[10px] text-gray-500">Lead scoring & analisis</p></div>
+          </a>
+          <a href="/fashionkas/closer" class="${activeNav === 'closer' ? 'text-fk-purple' : 'text-gray-300'}">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center"><i class="fa-solid fa-bullseye text-amber-400"></i></div>
+            <div><p class="font-medium">Closer AI</p><p class="text-[10px] text-gray-500">Follow-up & outreach</p></div>
+          </a>
+          <a href="/fashionkas/reports" class="${activeNav === 'reports' ? 'text-fk-purple' : 'text-gray-300'}">
+            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center"><i class="fa-solid fa-chart-bar text-cyan-400"></i></div>
+            <div><p class="font-medium">Laporan</p><p class="text-[10px] text-gray-500">PDF & analisis bulanan</p></div>
+          </a>
+          <a href="/fashionkas/settings" class="${activeNav === 'settings' ? 'text-fk-purple' : 'text-gray-300'}">
+            <div class="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center"><i class="fa-solid fa-gear text-gray-400"></i></div>
+            <div><p class="font-medium">Settings</p><p class="text-[10px] text-gray-500">Profil, PIN, ekspor</p></div>
+          </a>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -144,6 +190,17 @@ export function fashionLayout(title: string, content: string, activeNav?: string
       localStorage.removeItem('fk_store');
       window.location.href = '/login';
     }
+
+    // More menu toggle
+    function toggleMore(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('moreMenu');
+      menu.classList.toggle('show');
+    }
+    document.addEventListener('click', () => {
+      const menu = document.getElementById('moreMenu');
+      if (menu) menu.classList.remove('show');
+    });
 
     // Auth check on protected pages
     if (!window.location.pathname.startsWith('/login') && 

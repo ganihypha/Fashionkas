@@ -1,4 +1,4 @@
--- FashionKas Supabase Schema
+-- FashionKas Supabase Schema v1.2
 -- Run this via Supabase SQL Editor or REST API
 
 -- Enable UUID extension
@@ -87,6 +87,19 @@ CREATE TABLE IF NOT EXISTS customers (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- WhatsApp Messages log table (NEW v1.2)
+CREATE TABLE IF NOT EXISTS wa_messages (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  store_id UUID REFERENCES stores(id) ON DELETE CASCADE,
+  order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
+  phone TEXT NOT NULL DEFAULT '',
+  message_type TEXT NOT NULL DEFAULT 'receipt',
+  message TEXT DEFAULT '',
+  status TEXT DEFAULT 'pending',
+  fonnte_response JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Create indexes
 CREATE INDEX IF NOT EXISTS idx_products_store_id ON products(store_id);
 CREATE INDEX IF NOT EXISTS idx_orders_store_id ON orders(store_id);
@@ -94,6 +107,8 @@ CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_customers_store_id ON customers(store_id);
 CREATE INDEX IF NOT EXISTS idx_stores_slug ON stores(slug);
 CREATE INDEX IF NOT EXISTS idx_stores_phone ON stores(owner_phone);
+CREATE INDEX IF NOT EXISTS idx_wa_messages_store_id ON wa_messages(store_id);
+CREATE INDEX IF NOT EXISTS idx_wa_messages_created ON wa_messages(created_at DESC);
 
 -- Enable RLS (Row Level Security)
 ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
@@ -101,6 +116,7 @@ ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wa_messages ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for service_role access (our API uses service_role key)
 CREATE POLICY "Service role access stores" ON stores FOR ALL USING (true) WITH CHECK (true);
@@ -108,3 +124,4 @@ CREATE POLICY "Service role access products" ON products FOR ALL USING (true) WI
 CREATE POLICY "Service role access orders" ON orders FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role access order_items" ON order_items FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role access customers" ON customers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role access wa_messages" ON wa_messages FOR ALL USING (true) WITH CHECK (true);
