@@ -1,127 +1,98 @@
-# FashionKas v1.1.0
+# FashionKas v1.2.0
 
-> Kasir Digital + Katalog Online + WA Automation untuk Fashion Reseller Indonesia
+> Kasir Digital + Katalog Online + AI Agents + WA Automation untuk Fashion Reseller Indonesia
 
 ## URLs
 - **Production**: https://fashionkas.pages.dev
+- **Sandbox**: https://3000-inaugkt3jfm8iuad5sesr-b9b802c4.sandbox.novita.ai
 - **GitHub**: https://github.com/ganihypha/Fashionkas
-- **Public Catalog**: https://fashionkas.pages.dev/catalog/{store_slug}
+- **Backup**: https://www.genspark.ai/api/files/s/iySDU2ta
 
-## Features (v1.1.0)
+## Features (v1.2.0)
 
-### Auth System
-- **PIN-based login** (phone + 4-6 digit PIN, SHA-256 hashed)
-- **3-step registration wizard** (Store Info > Owner Info > PIN Setup)
-- **JWT token** (30-day expiry) with auto-redirect for logged-in users
-- **Change PIN** with old PIN verification
+### Core POS
+- **Kasir Digital** (`/fashionkas/sale`) - Cart, payment methods (Cash/Transfer/COD/Marketplace), WhatsApp receipt, discount & shipping, product images, size/color selector
+- **Katalog Management** (`/fashionkas/catalog`) - CRUD products, search/filter, image preview, sorting, featured toggle, inventory value
+- **Public Catalog** (`/catalog/:slug`) - Shareable catalog with OG meta tags, product detail modal
+- **Orders** (`/fashionkas/orders`) - Status tabs (pending/processing/shipped/delivered), tracking input, WA notification
 
-### POS / Kasir (`/fashionkas/sale`)
-- Product grid with **image thumbnails** and category badges
-- **Size/Color variant picker** modal for products with options
-- Cart with per-item image, size, color display
-- **Quick discount** (5K, 10K) and **quick shipping** (10K, 15K) buttons
-- Multiple payment: Cash, Transfer, COD, Marketplace
-- WhatsApp receipt with variant details (size/color)
-- Auto stock deduction on order save
-- Grid/list view toggle
+### AI Agents (NEW v1.2)
+- **Scout AI** (`/fashionkas/scout`) - RFM lead scoring, customer segmentation (VIP/Loyal/Warm/At-Risk/Cold), churn prediction, business insights
+- **Closer AI** (`/fashionkas/closer`) - Smart follow-up suggestions, WA outreach templates (Thank You/Loyalty/Re-engage/VIP/Win Back), Fonnte integration
 
-### Catalog Management (`/fashionkas/catalog`)
-- Product grid with **image preview** (fallback to colored icons)
-- **Inventory value** calculator (total stock value + est. profit)
-- **Sort options**: Terbaru, Harga, Stok, Terlaris
-- **Featured product** toggle (star badge)
-- **Profit calculator** in add/edit modal (auto-compute margin %)
-- **Quick size presets** (S-XL, All Size, S-3XL) and **quick color presets** (B&W, Gelap, Pastel)
-- Image URL preview in modal
+### WhatsApp Automation (NEW v1.2)
+- **WA Automation** (`/fashionkas/wa`) - Auto-send receipts, shipping notifications, broadcast promo, Fonnte status check, message history
 
-### Dashboard (`/fashionkas/dashboard`)
-- Revenue chart (Chart.js bar, 7-day, revenue + profit)
-- Today's highlight (revenue, orders, items sold, profit)
-- Monthly stats with profit margin %
-- Top 5 products by sales
-- Low stock + out-of-stock alerts
-- Category breakdown
-- Recent orders with status badges
+### Analytics & Reports (NEW v1.2)
+- **Reports** (`/fashionkas/reports`) - Monthly analytics, Chart.js daily revenue chart, top products, payment/category breakdown, PDF export
+- **Dashboard** (`/fashionkas/dashboard`) - Revenue chart, stats, alerts, recent orders
 
-### Orders (`/fashionkas/orders`)
-- Status tabs: All, Pending, Processing, Shipped, Delivered
-- Order detail modal with items, totals, profit
-- Tracking/resi input
-- WhatsApp notification button
-- Monthly summary (revenue, orders, profit)
+### Other
+- **Settings** (`/fashionkas/settings`) - Store profile, Fonnte setup guide, CSV export, PIN change
+- **Auth** (`/login`, `/register`) - Phone + PIN auth, JWT, 3-step registration wizard
 
-### Settings (`/fashionkas/settings`)
-- Editable store profile (name, description, owner, city)
-- Catalog sharing (copy link, WhatsApp, native share)
-- **Fonnte WhatsApp Automation** guide (setup instructions)
-- **CSV Export** for Products, Orders, Customers
-- Change PIN
-- Social links (Instagram, GitHub)
+## API Routes
 
-### Public Catalog (`/catalog/:slug`)
-- Mobile-optimized product browsing
-- Product detail modal with WhatsApp order link
-- Search + category filter
-- OG meta tags for social sharing
-- Store info header with avatar
-
-### Landing Page (`/`)
-- Demo catalog preview with 4 products
-- 3-tier pricing (Free, Basic Rp 99K, Pro Rp 149K)
-- How-it-works steps
-- Competitor comparison
-- Beta promotion badge
-
-## API Endpoints
-
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/api/auth/register` | No | Register new store |
-| POST | `/api/auth/login` | No | Login with phone + PIN |
-| GET | `/api/auth/me` | Yes | Get current store info |
-| PUT | `/api/auth/store` | Yes | Update store profile |
-| PUT | `/api/auth/change-pin` | Yes | Change PIN |
-| GET | `/api/products` | Yes | List store products |
-| POST | `/api/products` | Yes | Create product |
-| PUT | `/api/products/:id` | Yes | Update product |
-| DELETE | `/api/products/:id` | Yes | Delete product |
-| GET | `/api/products/public/:slug` | No | Public catalog |
-| GET | `/api/orders` | Yes | List orders |
-| POST | `/api/orders` | Yes | Create order + stock deduction |
-| PUT | `/api/orders/:id` | Yes | Update order status |
-| GET | `/api/customers` | Yes | List customers |
-| POST | `/api/customers` | Yes | Create customer |
-| GET | `/api/dashboard/stats` | Yes | Dashboard statistics |
-| GET | `/api/health` | No | Health check |
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/health` | GET | Health check (v1.2.0) |
+| `/api/auth/register` | POST | Register store |
+| `/api/auth/login` | POST | Login with phone+PIN |
+| `/api/auth/me` | GET | Get current store |
+| `/api/auth/store` | PUT | Update store profile |
+| `/api/auth/change-pin` | PUT | Change PIN |
+| `/api/products` | GET/POST | List/create products |
+| `/api/products/:id` | PUT/DELETE | Update/delete product |
+| `/api/products/public/:slug` | GET | Public catalog |
+| `/api/orders` | GET/POST | List/create orders |
+| `/api/orders/:id` | PUT | Update order status |
+| `/api/customers` | GET/POST | List/create customers |
+| `/api/dashboard/stats` | GET | Dashboard statistics |
+| `/api/wa/send-receipt` | POST | Send receipt via WA |
+| `/api/wa/send-shipping` | POST | Send shipping notif |
+| `/api/wa/broadcast` | POST | Broadcast promo |
+| `/api/wa/history` | GET | WA message history |
+| `/api/wa/status` | GET | Fonnte connection status |
+| `/api/reports/monthly` | GET | Monthly report data |
+| `/api/ai/scout/scores` | GET | Customer lead scores |
+| `/api/ai/scout/insights` | GET | AI business insights |
+| `/api/ai/closer/suggestions` | GET | Follow-up suggestions |
+| `/api/ai/closer/send` | POST | Send follow-up via WA |
+| `/api/ai/closer/templates` | GET | Message templates |
+| `/api/images/upload` | POST | Upload image (R2/base64) |
+| `/api/images/serve/*` | GET | Serve image from R2 |
+| `/api/images/delete` | DELETE | Delete image |
+| `/api/images/list` | GET | List store images |
 
 ## Tech Stack
-- **Backend**: Hono v4 + TypeScript on Cloudflare Workers
-- **Frontend**: Vanilla JS + Tailwind CSS (CDN) + Font Awesome
-- **Database**: Supabase PostgreSQL (REST API)
-- **Auth**: PIN + SHA-256 + JWT (Web Crypto API)
-- **Charts**: Chart.js
-- **WhatsApp**: Fonnte API (optional) + wa.me deep links
-- **Deployment**: Cloudflare Pages
+- **Backend**: Hono (Cloudflare Workers)
+- **Frontend**: TailwindCSS, Font Awesome, Chart.js
+- **Database**: Supabase (PostgreSQL)
+- **Auth**: JWT + SHA-256 PIN hash
+- **WA**: Fonnte API
+- **Deploy**: Cloudflare Pages
+- **Storage**: R2 (pending bucket creation, base64 fallback active)
 
-## Data Architecture
-- **stores**: id, name, slug, owner_name, owner_phone, pin_code, city, description, subscription_tier
-- **products**: id, store_id, name, category, price, cost_price, stock, total_sold, sizes[], colors[], image_url, description, is_active, is_featured
-- **orders**: id, store_id, order_number, customer_name, customer_phone, total_amount, total_profit, discount, shipping_cost, payment_method, payment_status, shipping_status, tracking_number, notes
-- **order_items**: id, order_id, product_id, product_name, quantity, unit_price, cost_price, size, color, subtotal
-- **customers**: id, store_id, name, phone, total_orders, total_spent, segment, last_order_at
+## Database Tables
+- `stores` - Store profiles
+- `products` - Product catalog
+- `orders` - Orders
+- `order_items` - Order line items
+- `customers` - Customer data
+- `wa_messages` - WhatsApp message log (NEW v1.2)
 
 ## Deployment
 - **Platform**: Cloudflare Pages
 - **Status**: Active
-- **Version**: 1.1.0
+- **Version**: 1.2.0
+- **Bundle**: 313.84 kB (50 modules)
+- **Pages**: 13 routes
 - **Last Updated**: 2026-03-18
 
-## Phase 2 Roadmap (Pending)
-- [ ] Fonnte WhatsApp automation (auto-send receipt, shipping updates, promos)
-- [ ] Image upload via Cloudflare R2 (in-app camera/gallery)
-- [ ] Scout AI Agent (lead scoring from Google Maps)
-- [ ] Closer AI Agent (WhatsApp outreach templates)
-- [ ] Multi-store management
-- [ ] Advanced analytics & PDF reports
-- [ ] Supplier catalog sync
-- [ ] Push notifications
+## Roadmap (v1.3+)
+1. R2 bucket creation + image upload activation
+2. Multi-store management
+3. Builder AI Agent (supplier finder)
+4. Harvest AI Agent (financial insights)
+5. PDF invoice generation
+6. Offline mode / PWA
