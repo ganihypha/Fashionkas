@@ -32,6 +32,7 @@ type Bindings = {
   SUPABASE_SERVICE_KEY: string
   JWT_SECRET: string
   FONNTE_TOKEN: string
+  FONNTE_ACCOUNT_TOKEN: string
   SCRAPERAPI_KEY: string
   R2_BUCKET: R2Bucket
 }
@@ -53,7 +54,7 @@ app.route('/api/images', imageRoutes)
 app.route('/api/ai', aiRoutes)
 
 // Health check
-app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '1.2.0' }))
+app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '1.2.1' }))
 
 // === PAGE ROUTES ===
 // Landing page

@@ -292,24 +292,35 @@ aiRoutes.get('/closer/suggestions', async (c) => {
   }
 })
 
-// Send follow-up message via Fonnte
+// Send follow-up message via Fonnte - FULL integration
+// Uses typing indicator, countryCode 62, and proper logging
 aiRoutes.post('/closer/send', async (c) => {
   try {
-    if (!c.env.FONNTE_TOKEN) return c.json({ success: false, message: 'Fonnte token belum dikonfigurasi' }, 400)
+    if (!c.env.FONNTE_TOKEN) return c.json({ success: false, message: 'Fonnte token belum dikonfigurasi. Setup di Settings > WhatsApp Automation.' }, 400)
     
     const { store_id, db } = await getStoreData(c)
-    const { phone, message, type } = await c.req.json()
+    const { phone, message, type, image_url, schedule } = await c.req.json()
     
     if (!phone || !message) return c.json({ success: false, message: 'phone & message wajib' }, 400)
+    
+    // Build Fonnte send params with full parameter support
+    const sendParams = new URLSearchParams()
+    sendParams.append('target', phone)
+    sendParams.append('message', message)
+    sendParams.append('countryCode', '62')
+    sendParams.append('typing', 'true')     // Show typing indicator before sending
+    sendParams.append('duration', '2')       // 2 second typing duration
+    if (image_url) sendParams.append('url', image_url) // Media attachment (Super plan+)
+    if (schedule) sendParams.append('schedule', schedule.toString()) // Scheduled send
     
     const res = await fetch('https://api.fonnte.com/send', {
       method: 'POST',
       headers: { 'Authorization': c.env.FONNTE_TOKEN },
-      body: new URLSearchParams({ target: phone, message, countryCode: '62' })
+      body: sendParams
     })
     const result: any = await res.json()
     
-    // Log message
+    // Log message to wa_messages table
     try {
       await db.insert('wa_messages', {
         store_id,
@@ -319,9 +330,73 @@ aiRoutes.post('/closer/send', async (c) => {
         status: result.status ? 'sent' : 'failed',
         fonnte_response: JSON.stringify(result)
       })
-    } catch { /* non-critical */ }
+    } catch { /* non-critical logging */ }
     
-    return c.json({ success: true, data: result, message: 'Pesan follow-up dikirim!' })
+    return c.json({ 
+      success: result.status !== false, 
+      data: result, 
+      message: result.status !== false 
+        ? 'Pesan follow-up dikirim! 🎯' 
+        : `Gagal: ${result.reason || 'Unknown error'}`
+    })
+  } catch (e: any) {
+    return c.json({ success: false, message: e.message }, 500)
+  }
+})
+
+// Bulk send follow-up messages (Closer AI batch mode)
+aiRoutes.post('/closer/send-bulk', async (c) => {
+  try {
+    if (!c.env.FONNTE_TOKEN) return c.json({ success: false, message: 'Fonnte token belum dikonfigurasi' }, 400)
+    
+    const { store_id, db } = await getStoreData(c)
+    const { messages } = await c.req.json()
+    
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return c.json({ success: false, message: 'messages array wajib (max 50)' }, 400)
+    }
+    
+    if (messages.length > 50) {
+      return c.json({ success: false, message: 'Maks 50 pesan per batch' }, 400)
+    }
+    
+    // Use Fonnte data parameter for bulk sending
+    const data = messages.map((m: any) => ({
+      target: m.phone,
+      message: m.message,
+      countryCode: '62',
+      typing: true,
+      delay: '3-8' // Random delay 3-8 seconds between messages (anti-ban)
+    }))
+    
+    const res = await fetch('https://api.fonnte.com/send', {
+      method: 'POST',
+      headers: { 'Authorization': c.env.FONNTE_TOKEN },
+      body: new URLSearchParams({ data: JSON.stringify(data) })
+    })
+    const result: any = await res.json()
+    
+    // Log bulk send
+    for (const m of messages) {
+      try {
+        await db.insert('wa_messages', {
+          store_id,
+          phone: m.phone,
+          message_type: m.type || 'closer_bulk',
+          message: m.message,
+          status: result.status ? 'sent' : 'failed',
+          fonnte_response: JSON.stringify({ bulk: true, total: messages.length })
+        })
+      } catch { /* non-critical */ }
+    }
+    
+    return c.json({ 
+      success: result.status !== false, 
+      data: { sent: messages.length, result },
+      message: result.status !== false 
+        ? `${messages.length} pesan follow-up dikirim! 🎯` 
+        : `Gagal: ${result.reason || 'Unknown error'}`
+    })
   } catch (e: any) {
     return c.json({ success: false, message: e.message }, 500)
   }

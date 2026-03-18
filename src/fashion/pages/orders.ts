@@ -286,6 +286,22 @@ export function ordersPage(): string {
         });
         showToast('Pesanan dikirim! Resi: ' + tracking);
         closeTrackingModal();
+        
+        // AUTO-SEND shipping notification via Fonnte API
+        try {
+          showToast('Mengirim notifikasi pengiriman via WA...', 'info');
+          const waRes = await apiFetch('/api/wa/send-shipping', { 
+            method: 'POST', 
+            body: JSON.stringify({ order_id: orderId, tracking_number: tracking }) 
+          });
+          if (waRes.success) {
+            showToast('Notif pengiriman WA terkirim! \\u{1F4E6}');
+          }
+        } catch(waErr) {
+          // Non-critical - order tetap terupdate
+          console.log('WA notif failed:', waErr.message);
+        }
+        
         await loadOrders();
       } catch(e) { showToast('Gagal: ' + e.message, 'error'); }
       btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-truck mr-1"></i>Kirim & Update';

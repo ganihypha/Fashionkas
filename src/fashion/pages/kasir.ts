@@ -477,7 +477,25 @@ export function kasirPage(): string {
           send_wa: document.getElementById('sendWA').checked
         };
         const res = await apiFetch('/api/orders', { method: 'POST', body: JSON.stringify(body) });
-        showToast('Pesanan ' + res.data.order_number + ' berhasil!');
+        showToast('Pesanan ' + res.data.order_number + ' berhasil! \\u2705');
+        
+        // AUTO-SEND struk via Fonnte API jika toggle WA aktif + ada nomor HP
+        const sendWaChecked = document.getElementById('sendWA').checked;
+        const custPhone = document.getElementById('custPhone').value.trim();
+        if (sendWaChecked && custPhone && res.data.id) {
+          try {
+            showToast('Mengirim struk via WhatsApp...', 'info');
+            const waRes = await apiFetch('/api/wa/send-receipt', { method: 'POST', body: JSON.stringify({ order_id: res.data.id }) });
+            if (waRes.success) {
+              showToast('Struk WA berhasil dikirim ke ' + custPhone + '! \\u{1F4E8}');
+            } else {
+              showToast('Order tersimpan, tapi struk WA gagal: ' + (waRes.message || ''), 'error');
+            }
+          } catch(waErr) {
+            showToast('Order OK! Struk WA gagal: ' + waErr.message, 'error');
+          }
+        }
+        
         cart = [];
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';

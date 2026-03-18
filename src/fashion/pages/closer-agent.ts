@@ -33,6 +33,17 @@ export function closerAgentPage(): string {
       </div>
     </div>
 
+    <!-- Bulk Send Button -->
+    <div class="glass-card rounded-xl p-4 fk-border flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium"><i class="fa-solid fa-paper-plane text-green-400 mr-2"></i>Kirim Semua via Fonnte</p>
+        <p class="text-[10px] text-gray-500">Batch send semua follow-up suggestions sekaligus (delay 3-8 detik/pesan)</p>
+      </div>
+      <button onclick="bulkSendAll()" id="btnBulkSend" class="px-4 py-2.5 rounded-xl bg-[#25D366] text-white text-xs font-heading font-bold whitespace-nowrap shadow-lg shadow-green-500/20">
+        <i class="fa-brands fa-whatsapp mr-1"></i>Kirim Semua
+      </button>
+    </div>
+
     <!-- Type Filter -->
     <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
       <button onclick="filterType('all')" class="type-filter active text-xs px-3 py-1.5 rounded-full bg-fk-purple/15 text-fk-purple border border-fk-purple/20 whitespace-nowrap" data-type="all">Semua</button>
@@ -244,6 +255,21 @@ export function closerAgentPage(): string {
     }
 
     function refreshSuggestions() { loadSuggestions(); showToast('Refreshing AI suggestions...', 'info'); }
+
+    async function bulkSendAll() {
+      if (allSuggestions.length === 0) { showToast('Tidak ada follow-up yang tersedia!', 'error'); return; }
+      if (!confirm('Kirim ' + allSuggestions.length + ' pesan follow-up sekaligus via Fonnte?\\n\\nDelay 3-8 detik antar pesan untuk anti-ban.')) return;
+      const btn = document.getElementById('btnBulkSend');
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Mengirim...';
+      try {
+        const messages = allSuggestions.map(s => ({ phone: s.customer.phone, message: s.template, type: s.type }));
+        const res = await apiFetch('/api/ai/closer/send-bulk', { method: 'POST', body: JSON.stringify({ messages }) });
+        showToast(res.message || allSuggestions.length + ' pesan terkirim!');
+        allSuggestions = [];
+        filterType('all');
+      } catch(e) { showToast('Gagal: ' + e.message, 'error'); }
+      btn.disabled = false; btn.innerHTML = '<i class="fa-brands fa-whatsapp mr-1"></i>Kirim Semua';
+    }
 
     loadSuggestions();
     loadTemplates();
