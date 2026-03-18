@@ -1,5 +1,6 @@
-// FashionKas v1.2 - Main Application Entry Point
-// Kasir Digital + Katalog Online + WA Automation + AI Agents untuk Fashion Reseller
+// FashionKas v2.0 - Main Application Entry Point
+// Kasir Digital + Katalog Online + WA Automation + AI Agents + Fonnte Webhook Bot
+// untuk Fashion Reseller Indonesia
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
@@ -25,6 +26,7 @@ import { waRoutes } from './routes/wa'
 import { reportRoutes } from './routes/reports'
 import { imageRoutes } from './routes/images'
 import { aiRoutes } from './routes/ai'
+import { webhookRoutes } from './routes/webhook'
 
 type Bindings = {
   SUPABASE_URL: string
@@ -52,9 +54,10 @@ app.route('/api/wa', waRoutes)
 app.route('/api/reports', reportRoutes)
 app.route('/api/images', imageRoutes)
 app.route('/api/ai', aiRoutes)
+app.route('/api/webhook', webhookRoutes)
 
 // Health check
-app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '1.2.1' }))
+app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '2.0', webhook: '/api/webhook/incoming' }))
 
 // === PAGE ROUTES ===
 // Landing page
