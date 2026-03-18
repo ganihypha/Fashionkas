@@ -1,131 +1,154 @@
-# FashionKas v1.2.1
+# FashionKas v2.0
+## Katalog + Kasir Digital + WhatsApp Bot untuk Fashion Reseller Indonesia
 
-> Kasir Digital + Katalog Online + AI Agents + WA Automation untuk Fashion Reseller Indonesia
+**Production**: https://fashionkas.pages.dev
+**GitHub**: https://github.com/ganihypha/Fashionkas
+**Webhook URL**: https://fashionkas.pages.dev/api/webhook/incoming
 
-## URLs
-- **Production**: https://fashionkas.pages.dev
-- **GitHub**: https://github.com/ganihypha/Fashionkas
+---
 
-## Features (v1.2.1)
+## Fitur Lengkap
 
-### Core POS
-- **Kasir Digital** (`/fashionkas/sale`) - Cart, payment methods (Cash/Transfer/COD/Marketplace), **auto-kirim struk WA via Fonnte**, discount & shipping, product images, size/color selector, typing indicator
-- **Katalog Management** (`/fashionkas/catalog`) - CRUD products, search/filter, image preview, sorting, featured toggle, inventory value
-- **Public Catalog** (`/catalog/:slug`) - Shareable catalog with OG meta tags, product detail modal
-- **Orders** (`/fashionkas/orders`) - Status tabs (pending/processing/shipped/delivered), tracking input, **auto-send shipping notification via Fonnte**
+### Kasir Digital (POS)
+- Tambah produk ke keranjang dengan size/color picker
+- Hitung otomatis total, profit, stok
+- Payment methods: Cash, Transfer, COD, Marketplace
+- Auto-kirim struk via WhatsApp (Fonnte)
 
-### AI Agents
-- **Scout AI** (`/fashionkas/scout`) - RFM lead scoring, customer segmentation (VIP/Loyal/Warm/At-Risk/Cold), churn prediction, business insights
-- **Closer AI** (`/fashionkas/closer`) - Smart follow-up suggestions, WA outreach templates (Thank You/Loyalty/Re-engage/VIP/Win Back), **bulk send via Fonnte** (delay 3-8s anti-ban), direct Fonnte integration with typing indicator
+### Katalog Digital
+- Upload produk (nama, harga, foto, ukuran, warna)
+- 1 link katalog shareable ke semua customer
+- Public catalog: `https://fashionkas.pages.dev/catalog/{slug}`
+- Tombol "Pesan" langsung buka WhatsApp
 
-### WhatsApp Automation - FULL Fonnte Integration (v1.2.1)
-- **Device Status** - Real-time connection check, quota display, package info
-- **Auto-kirim Struk** - Otomatis dari Kasir setelah saveOrder() + typing indicator 2s
-- **Notif Pengiriman** - Auto-send dari Orders setelah input resi + link cekresi.com
-- **Broadcast Promo** - Ke semua/segment customer, random delay 2-5s, image support
-- **Kirim Pesan Custom** - Ke nomor manapun, typing indicator, scheduled send
-- **Multi-step Messages** - Via Fonnte data parameter
-- **WhatsApp Poll** - Polling 2-12 pilihan
-- **Share Location** - Kirim lokasi via WA
-- **Validate Numbers** - Cek nomor WA terdaftar (max 500)
-- **Message History** - Log pesan + stats (sent/failed/by type)
-- **Quota Check** - Sisa quota Fonnte
+### WhatsApp Automation (Fonnte)
+- Auto-kirim struk setelah transaksi
+- Notifikasi pengiriman + tracking resi
+- Broadcast promo ke segmen customer
+- Kirim pesan custom + scheduling
+- Validate nomor WhatsApp
+- Message history & analytics
 
-### Fonnte API Configuration
-- **Device**: 083876789823 (Fashionkas)
-- **Package**: Free (1000 quota)
-- **Expiration**: 18 April 2026
-- **Status**: Connected
-- **Docs**: https://docs.fonnte.com/
+### WhatsApp Bot (v2.0 - NEW!)
+Webhook auto-reply via Fonnte. Kirim command ke nomor WA toko:
 
-### Analytics & Reports
-- **Reports** (`/fashionkas/reports`) - Monthly analytics, Chart.js daily revenue chart, top products, payment/category breakdown, PDF export
-- **Dashboard** (`/fashionkas/dashboard`) - Revenue chart, stats, alerts, recent orders
+**Customer Commands:**
+| Command | Fungsi |
+|---------|--------|
+| `HELP` / `MENU` | Lihat semua perintah |
+| `KATALOG` | Lihat semua produk + harga |
+| `HARGA` | Daftar harga |
+| `CARI [nama]` | Cari produk |
+| `ORDER [produk]` | Pesan produk |
+| `CEK [no order]` | Cek status pesanan |
+| `KATEGORI` | Lihat kategori |
+| `KATEGORI [nama]` | Produk per kategori |
+| `INFO` | Info toko |
+| `PROMO` | Promo terbaru |
 
-### Other
-- **Settings** (`/fashionkas/settings`) - Store profile, catalog sharing, CSV export, PIN change
-- **Auth** (`/login`, `/register`) - Phone + PIN auth, JWT, 3-step registration wizard
+**Admin Commands (Owner Only):**
+| Command | Fungsi |
+|---------|--------|
+| `STOK` | Alert stok rendah/habis |
+| `LAPORAN` | Ringkasan hari ini |
+| `OMZET` | Omzet bulan ini + breakdown |
+| `AUDIT` | Full audit toko lengkap |
 
-## API Routes
+### Dashboard & Analytics
+- Pendapatan harian/mingguan/bulanan
+- Produk terlaris
+- Alert stok rendah
+- Grafik revenue 7 hari
 
-### Auth & Core
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/health` | GET | Health check (v1.2.1) |
-| `/api/auth/register` | POST | Register store |
-| `/api/auth/login` | POST | Login with phone+PIN |
-| `/api/auth/me` | GET | Get current store |
-| `/api/auth/store` | PUT | Update store profile |
-| `/api/products` | GET/POST | List/create products |
-| `/api/products/:id` | PUT/DELETE | Update/delete product |
-| `/api/orders` | GET/POST | List/create orders |
-| `/api/orders/:id` | PUT | Update order status |
-| `/api/customers` | GET/POST | List/create customers |
-| `/api/dashboard/stats` | GET | Dashboard statistics |
+### Scout AI (Lead Scoring)
+- RFM scoring (Recency, Frequency, Monetary)
+- Segment classification (VIP, Loyal, Warm, At Risk, Cold)
+- Churn prediction
+- Category preferences
 
-### WhatsApp Automation (Fonnte API)
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/wa/status` | GET | Device profile + connection status |
-| `/api/wa/devices` | GET | All devices info (Account Token) |
-| `/api/wa/quota` | GET | Remaining quota check |
-| `/api/wa/history` | GET | Message log + stats (last 100) |
-| `/api/wa/send-receipt` | POST | Send order receipt (typing indicator) |
-| `/api/wa/send-shipping` | POST | Send shipping notif + tracking link |
-| `/api/wa/broadcast` | POST | Broadcast promo (delay 2-5s, image support) |
-| `/api/wa/send-custom` | POST | Custom message (typing, scheduled) |
-| `/api/wa/send-multi` | POST | Multi-step via Fonnte data param |
-| `/api/wa/send-poll` | POST | WhatsApp poll (2-12 choices) |
-| `/api/wa/send-location` | POST | Share location |
-| `/api/wa/validate` | POST | Validate WA numbers (max 500) |
+### Closer AI (WA Outreach)
+- Smart follow-up suggestions
+- Template messages (Thank You, Promo, Re-engage, VIP, Win Back)
+- Bulk send via Fonnte with delay
+- Auto-personalize per customer
 
-### AI Agents
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/ai/scout/scores` | GET | Customer RFM lead scores |
-| `/api/ai/scout/insights` | GET | AI business insights |
-| `/api/ai/closer/suggestions` | GET | Follow-up suggestions |
-| `/api/ai/closer/send` | POST | Send follow-up via Fonnte (typing) |
-| `/api/ai/closer/send-bulk` | POST | Bulk send max 50 (delay 3-8s) |
-| `/api/ai/closer/templates` | GET | Message templates |
+### Reports
+- Monthly revenue/profit breakdown
+- Daily data for charts
+- Payment method analysis
+- Category breakdown
 
-### Images & Reports
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/reports/monthly` | GET | Monthly report data |
-| `/api/images/upload` | POST | Upload image (R2/base64) |
-| `/api/images/serve/*` | GET | Serve image from R2 |
+---
+
+## Setup Fonnte Webhook
+
+1. Login ke https://md.fonnte.com
+2. Device > Edit Device
+3. Set field berikut:
+
+| Setting | Value |
+|---------|-------|
+| **Webhook** | `https://fashionkas.pages.dev/api/webhook/incoming` |
+| **Webhook Connect** | `https://fashionkas.pages.dev/api/webhook/incoming` |
+| **Webhook Message Status** | `https://fashionkas.pages.dev/api/webhook/status` |
+| **autoread** | ON |
+| **Response Source** | Autoreply |
+| **Personal** | ON |
+| **Group** | ON |
+
+4. Save. Sekarang setiap pesan masuk ke nomor WA akan auto-reply!
+
+---
+
+## API Endpoints
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/health` | No | Health check |
+| POST | `/api/auth/register` | No | Daftar toko baru |
+| POST | `/api/auth/login` | No | Login (phone+PIN) |
+| GET | `/api/auth/me` | JWT | Get current user |
+| GET | `/api/products` | JWT | List produk |
+| POST | `/api/products` | JWT | Tambah produk |
+| GET | `/api/products/public/:slug` | No | Katalog publik |
+| GET | `/api/orders` | JWT | List pesanan |
+| POST | `/api/orders` | JWT | Buat pesanan |
+| GET | `/api/dashboard/stats` | JWT | Dashboard stats |
+| GET | `/api/wa/status` | No | Fonnte device status |
+| POST | `/api/wa/send-receipt` | JWT | Kirim struk WA |
+| POST | `/api/wa/send-shipping` | JWT | Notif pengiriman |
+| POST | `/api/wa/broadcast` | JWT | Broadcast promo |
+| POST | `/api/wa/send-custom` | JWT | Pesan custom |
+| GET | `/api/wa/history` | JWT | Riwayat WA |
+| GET | `/api/ai/scout/scores` | JWT | Customer scores |
+| GET | `/api/ai/closer/suggestions` | JWT | Follow-up suggestions |
+| POST | `/api/ai/closer/send` | JWT | Send follow-up |
+| **POST** | **`/api/webhook/incoming`** | **Fonnte** | **Webhook incoming** |
+| **POST** | **`/api/webhook/status`** | **Fonnte** | **Delivery status** |
+| GET | `/api/reports/monthly` | JWT | Laporan bulanan |
+
+---
 
 ## Tech Stack
-- **Backend**: Hono (Cloudflare Workers)
-- **Frontend**: TailwindCSS, Font Awesome, Chart.js
+- **Backend**: Hono v4 (TypeScript)
+- **Frontend**: TailwindCSS CDN + Font Awesome
 - **Database**: Supabase (PostgreSQL)
-- **Auth**: JWT + SHA-256 PIN hash
-- **WA**: Fonnte API (Full integration - 12 endpoints)
+- **WhatsApp**: Fonnte API (auto-reply + webhook)
 - **Deploy**: Cloudflare Pages
-- **Storage**: R2 (pending bucket, base64 fallback active)
+- **Design**: Dark glassmorphism, purple accent (#A855F7)
 
-## Database Tables
-- `stores` - Store profiles (name, slug, owner, pin, city, subscription)
-- `products` - Product catalog (name, category, price, stock, sizes, colors, images)
-- `orders` - Orders (order_number, customer, payment, shipping, tracking)
-- `order_items` - Order line items (product, quantity, size, color, subtotal)
-- `customers` - Customer data (name, phone, segment, total orders/spent)
-- `wa_messages` - WhatsApp message log (type, status, fonnte_response)
+## Credentials
+- **Fonnte Device Token**: Set di wrangler.jsonc `vars.FONNTE_TOKEN`
+- **Fonnte Account Token**: Set di wrangler.jsonc `vars.FONNTE_ACCOUNT_TOKEN`
+- **Supabase**: Set di wrangler.jsonc `vars.SUPABASE_*`
 
-## Deployment
-- **Platform**: Cloudflare Pages
-- **Status**: Active
-- **Version**: 1.2.1
-- **Bundle**: 338.96 kB (50 modules)
-- **Pages**: 13 routes
-- **Last Updated**: 2026-03-18
+## Deploy
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name fashionkas
+```
 
-## Roadmap (v1.3+)
-1. R2 bucket creation + image upload activation
-2. Multi-store management
-3. Fonnte webhook integration (auto-reply, attachment handling)
-4. Builder AI Agent (supplier finder)
-5. Harvest AI Agent (financial insights)
-6. PDF invoice generation
-7. Offline mode / PWA
+---
+
+**v2.0** | 18 Maret 2026 | Built with GenSpark.AI
+**Sovereign Empire** | FashionKas Module
