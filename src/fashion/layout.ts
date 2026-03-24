@@ -1,13 +1,19 @@
-// FashionKas Layout Component v1.2
-// Updated nav with WA Automation, Reports, Scout & Closer AI
+// FashionKas Layout Component v2.1
+// Updated: PWA support, DP/Lunas status, onboarding
 export function fashionLayout(title: string, content: string, activeNav?: string): string {
   return `<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>${title} | FashionKas</title>
   <meta name="description" content="Katalog + Kasir Digital + AI Agent untuk Fashion Reseller Indonesia.">
+  <meta name="theme-color" content="#A855F7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FashionKas">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -215,6 +221,47 @@ export function fashionLayout(title: string, content: string, activeNav?: string
     if (store.name && document.getElementById('userAvatar')) {
       document.getElementById('userAvatar').textContent = store.name.substring(0, 2).toUpperCase();
     }
+
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    // Install prompt handler
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      // Show install banner if not yet installed and not dismissed
+      if (!localStorage.getItem('fk_pwa_dismissed')) {
+        showInstallBanner();
+      }
+    });
+
+    function showInstallBanner() {
+      if (document.getElementById('installBanner')) return;
+      const banner = document.createElement('div');
+      banner.id = 'installBanner';
+      banner.innerHTML = '<div style="position:fixed;bottom:76px;left:12px;right:12px;z-index:90;background:rgba(26,26,46,0.95);backdrop-filter:blur(16px);border:1px solid rgba(168,85,247,0.3);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,0.3)"><div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#A855F7,#7C3AED);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-download" style="color:white;font-size:16px"></i></div><div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:600;margin:0">Install FashionKas</p><p style="font-size:10px;color:#888;margin:2px 0 0">Akses cepat dari home screen</p></div><button onclick="installPWA()" style="background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">Install</button><button onclick="dismissInstall()" style="background:none;border:none;color:#666;cursor:pointer;font-size:14px;padding:4px"><i class="fa-solid fa-xmark"></i></button></div>';
+      document.body.appendChild(banner);
+    }
+
+    window.installPWA = async function() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const result = await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        const banner = document.getElementById('installBanner');
+        if (banner) banner.remove();
+        if (result.outcome === 'accepted') showToast('FashionKas terinstall!');
+      }
+    };
+
+    window.dismissInstall = function() {
+      localStorage.setItem('fk_pwa_dismissed', '1');
+      const banner = document.getElementById('installBanner');
+      if (banner) banner.remove();
+    };
   </script>
 </body>
 </html>`

@@ -421,7 +421,7 @@ export function registerPage(): string {
           btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Toko Berhasil Dibuat!';
           btn.classList.remove('fk-gradient');
           btn.classList.add('bg-green-500');
-          setTimeout(() => { window.location.href = '/fashionkas/dashboard'; }, 1000);
+          setTimeout(() => { window.location.href = '/fashionkas/onboarding'; }, 1000);
         } else {
           errText.textContent = data.message || 'Registrasi gagal'; errEl.classList.remove('hidden');
           btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-rocket mr-2"></i>Buat Toko Sekarang!';

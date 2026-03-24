@@ -140,7 +140,8 @@ export function ordersPage(): string {
 
     function getPaymentBadge(status) {
       if (status === 'paid') return '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/15 text-green-400"><i class="fa-solid fa-check mr-0.5"></i>Lunas</span>';
-      return '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400">Belum Bayar</span>';
+      if (status === 'dp') return '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400"><i class="fa-solid fa-coins mr-0.5"></i>DP</span>';
+      return '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/15 text-red-400"><i class="fa-solid fa-clock mr-0.5"></i>Belum Bayar</span>';
     }
 
     function renderOrders(orders) {
@@ -217,6 +218,9 @@ export function ordersPage(): string {
       }
       if (o.payment_status !== 'paid') {
         actionBtns += '<button onclick="updatePaymentStatus(\\'' + o.id + '\\')" class="text-xs py-2.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 font-medium"><i class="fa-solid fa-money-bill mr-1"></i>Tandai Lunas</button>';
+      }
+      if (o.payment_status === 'pending') {
+        actionBtns += '<button onclick="updatePaymentDP(\\'' + o.id + '\\')" class="text-xs py-2.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium"><i class="fa-solid fa-coins mr-1"></i>Tandai DP</button>';
       }
       if (waPhone) {
         const waMsg = encodeURIComponent('Hai ' + (o.customer_name || '') + ', pesanan Anda (' + o.order_number + ') sedang ' + {pending:'menunggu konfirmasi',processing:'diproses',shipped:'dalam pengiriman',delivered:'sudah diterima'}[o.shipping_status] + '. Total: ' + formatRupiah(o.total_amount));
@@ -319,7 +323,16 @@ export function ordersPage(): string {
     async function updatePaymentStatus(id) {
       try {
         await apiFetch('/api/orders/' + id, { method: 'PUT', body: JSON.stringify({ payment_status: 'paid' }) });
-        showToast('Pembayaran dikonfirmasi!');
+        showToast('Pembayaran dikonfirmasi Lunas!');
+        closeOrderModal();
+        await loadOrders();
+      } catch(e) { showToast('Gagal: ' + e.message, 'error'); }
+    }
+
+    async function updatePaymentDP(id) {
+      try {
+        await apiFetch('/api/orders/' + id, { method: 'PUT', body: JSON.stringify({ payment_status: 'dp' }) });
+        showToast('Status diubah ke DP!');
         closeOrderModal();
         await loadOrders();
       } catch(e) { showToast('Gagal: ' + e.message, 'error'); }

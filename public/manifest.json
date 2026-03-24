@@ -1,0 +1,28 @@
+{
+  "name": "FashionKas - Kasir Digital",
+  "short_name": "FashionKas",
+  "description": "Kasir Digital + Katalog Online + WA Automation untuk Fashion Reseller Indonesia",
+  "start_url": "/fashionkas/dashboard",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#A855F7",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "shopping", "finance"],
+  "lang": "id",
+  "dir": "ltr"
+}

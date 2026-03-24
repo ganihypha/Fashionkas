@@ -158,7 +158,7 @@ export function kasirPage(): string {
 
       <!-- Payment Methods -->
       <h3 class="text-xs font-bold text-gray-400 uppercase mb-2"><i class="fa-solid fa-credit-card mr-1"></i>Metode Bayar</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
         <button onclick="selectPayment('cash')" class="pay-btn text-xs py-2.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 active" data-method="cash">
           <i class="fa-solid fa-money-bill-wave mr-1"></i>Cash
         </button>
@@ -170,6 +170,20 @@ export function kasirPage(): string {
         </button>
         <button onclick="selectPayment('marketplace')" class="pay-btn text-xs py-2.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20" data-method="marketplace">
           <i class="fa-solid fa-store mr-1"></i>MP
+        </button>
+      </div>
+
+      <!-- Payment Status (DP / Lunas / Belum Bayar) -->
+      <h3 class="text-xs font-bold text-gray-400 uppercase mb-2"><i class="fa-solid fa-wallet mr-1"></i>Status Bayar</h3>
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <button onclick="selectPayStatus('paid')" class="paystatus-btn text-xs py-2 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 active" data-status="paid">
+          <i class="fa-solid fa-check-circle mr-1"></i>Lunas
+        </button>
+        <button onclick="selectPayStatus('dp')" class="paystatus-btn text-xs py-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20" data-status="dp">
+          <i class="fa-solid fa-coins mr-1"></i>DP
+        </button>
+        <button onclick="selectPayStatus('pending')" class="paystatus-btn text-xs py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20" data-status="pending">
+          <i class="fa-solid fa-clock mr-1"></i>Belum
         </button>
       </div>
 
@@ -197,6 +211,7 @@ export function kasirPage(): string {
   <style>
     .cat-pill.active { background: rgba(168,85,247,0.2) !important; color: #A855F7 !important; border-color: rgba(168,85,247,0.3) !important; }
     .pay-btn.active { box-shadow: inset 0 0 0 2px currentColor; font-weight: 700; }
+    .paystatus-btn.active { box-shadow: inset 0 0 0 2px currentColor; font-weight: 700; }
     .product-card { cursor: pointer; transition: all 0.2s; }
     .product-card:hover { transform: scale(1.02); border-color: rgba(168,85,247,0.3) !important; }
     .product-card.in-cart { border-color: rgba(168,85,247,0.5) !important; background: rgba(168,85,247,0.08) !important; }
@@ -209,6 +224,7 @@ export function kasirPage(): string {
     let allProducts = [];
     let cart = [];
     let selectedPayment = 'cash';
+    let selectedPayStatus = 'paid';
     let currentCategory = 'all';
     let viewMode = 'grid'; // grid or list
     let vmProduct = null;
@@ -439,6 +455,7 @@ export function kasirPage(): string {
     }
 
     function selectPayment(method) { selectedPayment = method; document.querySelectorAll('.pay-btn').forEach(b => b.classList.toggle('active', b.dataset.method === method)); }
+    function selectPayStatus(status) { selectedPayStatus = status; document.querySelectorAll('.paystatus-btn').forEach(b => b.classList.toggle('active', b.dataset.status === status)); }
     function quickDiscount(v) { document.getElementById('discountInput').value = v; updateTotals(); }
     function quickShipping(v) { document.getElementById('shippingInput').value = v; updateTotals(); }
     function updateCustBadge() {
@@ -456,7 +473,9 @@ export function kasirPage(): string {
       document.getElementById('shippingInput').value = '0';
       document.getElementById('orderNotes').value = '';
       selectedPayment = 'cash';
+      selectedPayStatus = 'paid';
       document.querySelectorAll('.pay-btn').forEach(b => b.classList.toggle('active', b.dataset.method === 'cash'));
+      document.querySelectorAll('.paystatus-btn').forEach(b => b.classList.toggle('active', b.dataset.status === 'paid'));
       document.getElementById('custBadge').classList.add('hidden');
       afterCartChange();
     }
@@ -471,6 +490,7 @@ export function kasirPage(): string {
           customer_phone: document.getElementById('custPhone').value.trim(),
           items: cart.map(c => ({ product_id: c.product_id, name: c.name, price: c.price, cost_price: c.cost_price, quantity: c.quantity, size: c.size, color: c.color })),
           payment_method: selectedPayment,
+          payment_status: selectedPayStatus,
           discount: document.getElementById('discountInput').value,
           shipping_cost: document.getElementById('shippingInput').value,
           notes: document.getElementById('orderNotes').value.trim(),

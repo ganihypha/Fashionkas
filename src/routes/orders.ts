@@ -65,16 +65,29 @@ orderRoutes.post('/', async (c) => {
     const orderItems: any[] = []
     
     for (const item of items) {
-      const subtotal = item.price * item.quantity
-      const profit = (item.price - (item.cost_price || 0)) * item.quantity
+      const price = Number(item.price || item.unit_price || 0)
+      const quantity = Number(item.quantity || 1)
+      const costPrice = Number(item.cost_price || 0)
+      const subtotal = price * quantity
+      const profit = (price - costPrice) * quantity
       totalAmount += subtotal
       totalProfit += profit
+      
+      // Resolve product name - try item fields first, then lookup from DB if needed
+      let productName = item.name || item.product_name || ''
+      if (!productName && item.product_id) {
+        try {
+          const products = await db.query('products', { eq: [['id', item.product_id]], limit: 1 })
+          if (products && products.length > 0) productName = products[0].name
+        } catch { /* ignore lookup failure */ }
+      }
+      
       orderItems.push({
-        product_id: item.product_id,
-        product_name: item.name,
-        quantity: item.quantity,
-        unit_price: item.price,
-        cost_price: item.cost_price || 0,
+        product_id: item.product_id || null,
+        product_name: productName || 'Produk',
+        quantity,
+        unit_price: price,
+        cost_price: costPrice,
         size: item.size || '',
         color: item.color || '',
         subtotal
@@ -82,6 +95,13 @@ orderRoutes.post('/', async (c) => {
     }
     
     totalAmount = totalAmount - (parseInt(discount) || 0) + (parseInt(shipping_cost) || 0)
+    
+    // Determine payment status: support dp (down payment), pending, paid
+    let paymentStatus = 'paid'
+    if (payment_method === 'cod') paymentStatus = 'pending'
+    if (body.payment_status === 'dp') paymentStatus = 'dp'
+    if (body.payment_status === 'pending') paymentStatus = 'pending'
+    if (body.payment_status === 'paid') paymentStatus = 'paid'
     
     // Create order
     const [order] = await db.insert('orders', {
@@ -94,7 +114,7 @@ orderRoutes.post('/', async (c) => {
       discount: parseInt(discount) || 0,
       shipping_cost: parseInt(shipping_cost) || 0,
       payment_method,
-      payment_status: payment_method === 'cod' ? 'pending' : 'paid',
+      payment_status: paymentStatus,
       shipping_status: 'pending',
       notes: notes || ''
     })

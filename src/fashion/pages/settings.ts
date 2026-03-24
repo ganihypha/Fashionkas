@@ -184,7 +184,7 @@ export function settingsPage(): string {
     <div class="glass-card rounded-xl p-5 fk-border">
       <h2 class="font-heading font-bold text-sm mb-4"><i class="fa-solid fa-info-circle mr-2 text-fk-purple"></i>Tentang App</h2>
       <div class="space-y-2">
-        <div class="flex justify-between text-sm"><span class="text-gray-400">Versi</span><span class="font-mono text-fk-purple">1.1.0</span></div>
+        <div class="flex justify-between text-sm"><span class="text-gray-400">Versi</span><span class="font-mono text-fk-purple">2.1.0</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-400">Platform</span><span class="text-gray-300">Cloudflare Workers</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-400">Database</span><span class="text-gray-300">Supabase PostgreSQL</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-400">WhatsApp</span><span class="text-gray-300">Fonnte API</span></div>

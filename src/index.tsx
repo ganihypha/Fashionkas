@@ -1,5 +1,6 @@
-// FashionKas v2.0 - Main Application Entry Point
+// FashionKas v2.1 - Main Application Entry Point
 // Kasir Digital + Katalog Online + WA Automation + AI Agents + Fonnte Webhook Bot
+// PWA + Onboarding + DP/Lunas Payment Status
 // untuk Fashion Reseller Indonesia
 
 import { Hono } from 'hono'
@@ -17,6 +18,7 @@ import { waAutomationPage } from './fashion/pages/wa-automation'
 import { reportsPage } from './fashion/pages/reports'
 import { scoutAgentPage } from './fashion/pages/scout-agent'
 import { closerAgentPage } from './fashion/pages/closer-agent'
+import { onboardingPage } from './fashion/pages/onboarding'
 import { authRoutes } from './routes/auth'
 import { productRoutes } from './routes/products'
 import { orderRoutes } from './routes/orders'
@@ -44,6 +46,36 @@ const app = new Hono<{ Bindings: Bindings }>()
 // CORS for API routes
 app.use('/api/*', cors())
 
+// Serve static PWA files explicitly (for local dev compatibility)
+app.get('/manifest.json', async (c) => {
+  try {
+    // In production Cloudflare Pages serves these automatically
+    // This fallback is for local dev
+    return c.json({
+      name: "FashionKas - Kasir Digital",
+      short_name: "FashionKas",
+      description: "Kasir Digital + Katalog Online + WA Automation untuk Fashion Reseller Indonesia",
+      start_url: "/fashionkas/dashboard",
+      display: "standalone",
+      background_color: "#0A0A0A",
+      theme_color: "#A855F7",
+      orientation: "portrait",
+      scope: "/",
+      icons: [
+        { src: "/static/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+        { src: "/static/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
+      ],
+      categories: ["business", "shopping", "finance"],
+      lang: "id"
+    })
+  } catch { return c.json({}) }
+})
+
+app.get('/sw.js', async (c) => {
+  const sw = `const CACHE_NAME='fashionkas-v2.1';self.addEventListener('install',()=>{self.skipWaiting()});self.addEventListener('activate',(e)=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE_NAME).map(x=>caches.delete(x)))));self.clients.claim()});self.addEventListener('fetch',(e)=>{if(e.request.method!=='GET'||new URL(e.request.url).pathname.startsWith('/api/'))return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(CACHE_NAME).then(ca=>ca.put(e.request,c))}return r}).catch(()=>caches.match(e.request).then(c=>c||new Response('Offline',{status:503}))))});`;
+  return new Response(sw, { headers: { 'Content-Type': 'application/javascript', 'Cache-Control': 'no-cache' } })
+})
+
 // === API ROUTES ===
 app.route('/api/auth', authRoutes)
 app.route('/api/products', productRoutes)
@@ -57,7 +89,7 @@ app.route('/api/ai', aiRoutes)
 app.route('/api/webhook', webhookRoutes)
 
 // Health check
-app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '2.0', webhook: '/api/webhook/incoming' }))
+app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '2.1', webhook: '/api/webhook/incoming' }))
 
 // === PAGE ROUTES ===
 // Landing page
@@ -77,6 +109,7 @@ app.get('/fashionkas/wa', (c) => c.html(waAutomationPage()))
 app.get('/fashionkas/reports', (c) => c.html(reportsPage()))
 app.get('/fashionkas/scout', (c) => c.html(scoutAgentPage()))
 app.get('/fashionkas/closer', (c) => c.html(closerAgentPage()))
+app.get('/fashionkas/onboarding', (c) => c.html(onboardingPage()))
 
 // Public catalog (no auth)
 app.get('/catalog/:slug', (c) => {
