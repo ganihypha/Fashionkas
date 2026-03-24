@@ -218,6 +218,11 @@ export function catalogManagePage(): string {
   <script>
     let allProducts = [];
 
+    // Helper function for image error fallback (avoids nested quote escaping issues)
+    function imgFallback(el, color) {
+      el.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center" style="background:' + color + '08"><i class="fa-solid fa-shirt text-3xl" style="color:' + color + '"></i></div>';
+    }
+
     async function loadCatalog() {
       try {
         const res = await apiFetch('/api/products');
@@ -264,7 +269,7 @@ export function catalogManagePage(): string {
           <!-- Image -->
           <div class="h-32 bg-empire-dark relative overflow-hidden">
             \${p.image_url ? 
-              '<img src="'+p.image_url+'" class="product-img-cover" loading="lazy" onerror="this.parentElement.innerHTML=\\'<div class=\\\\'w-full h-full flex items-center justify-center\\\\' style=\\\\'background:'+cc+'08\\\\'><i class=\\\\'fa-solid fa-shirt text-3xl\\\\' style=\\\\'color:'+cc+'\\\\'></i></div>\\'">' 
+              '<img src="'+p.image_url+'" class="product-img-cover" loading="lazy" onerror="imgFallback(this,\\''+cc+'\\')">' 
               : '<div class="w-full h-full flex items-center justify-center" style="background:'+cc+'08"><i class="fa-solid fa-shirt text-3xl" style="color:'+cc+'"></i></div>'}
             <div class="absolute top-2 left-2 flex gap-1">
               <span class="text-[9px] px-2 py-0.5 rounded-full backdrop-blur-sm" style="background:\${cc}30;color:\${cc}">\${p.category}</span>
@@ -369,7 +374,7 @@ export function catalogManagePage(): string {
       const url = document.getElementById('pImage').value.trim();
       const el = document.getElementById('imagePreview');
       if (url) {
-        el.innerHTML = '<img src="'+url+'" class="product-img-cover rounded-xl" onerror="this.parentElement.innerHTML=\\'<div class=\\\\'text-center text-red-400\\\\'>\\u274C Gambar tidak valid</div>\\'">';
+        el.innerHTML = '<img src="'+url+'" class="product-img-cover rounded-xl" onerror="this.parentElement.innerHTML=\\'\\u274C Gambar tidak valid\\'">';
       } else {
         el.innerHTML = '<div class="text-center text-gray-600"><i class="fa-solid fa-image text-2xl mb-1"></i><p class="text-[10px]">Preview gambar</p></div>';
       }

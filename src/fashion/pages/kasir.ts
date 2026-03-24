@@ -232,6 +232,11 @@ export function kasirPage(): string {
     let vmSelectedColor = '';
     let vmQuantity = 1;
 
+    // Helper function for image error fallback (avoids nested quote escaping issues)
+    function imgFallback(el, color) {
+      el.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center" style="background:' + color + '10"><i class="fa-solid fa-shirt" style="color:' + color + ';font-size:20px"></i></div>';
+    }
+
     // Set today's date
     document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -266,7 +271,7 @@ export function kasirPage(): string {
         <div class="product-card glass-card rounded-lg border border-white/5 overflow-hidden \${inCart ? 'in-cart' : ''} \${oos ? 'out-of-stock' : ''}" 
           onclick="\${hasVariants && !oos ? "openVariantModal('"+p.id+"')" : "quickAdd('"+p.id+"')"}" data-id="\${p.id}" data-cat="\${p.category}" data-name="\${p.name.toLowerCase()}">
           \${p.image_url ? 
-            '<div class="h-20 bg-empire-dark overflow-hidden"><img src="'+p.image_url+'" class="product-img" loading="lazy" onerror="this.parentElement.innerHTML=\\'<div class=\\\\'w-full h-full flex items-center justify-center\\\\' style=\\\\'background:'+cc+'10\\\\'><i class=\\\\'fa-solid fa-shirt\\\\' style=\\\\'color:'+cc+';font-size:20px\\\\'></i></div>\\'">' + '</div>' 
+            '<div class="h-20 bg-empire-dark overflow-hidden"><img src="'+p.image_url+'" class="product-img" loading="lazy" onerror="imgFallback(this,\\''+cc+'\\')">' + '</div>' 
             : '<div class="h-16 flex items-center justify-center" style="background:'+cc+'08"><i class="fa-solid fa-shirt" style="color:'+cc+';font-size:20px"></i></div>'}
           <div class="p-2">
             <div class="flex items-start justify-between mb-0.5">
