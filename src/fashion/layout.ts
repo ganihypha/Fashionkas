@@ -1,5 +1,9 @@
-// FashionKas Layout Component v2.3
-// Fixed: const store collision with page scripts causing 'Identifier already declared' error
+// FashionKas Layout Component v2.4
+// CRITICAL FIX: Core JS functions (apiFetch, getStore, showToast, etc.) moved to <head>
+// so they are available BEFORE any page content <script> blocks execute.
+// Previous bug: content scripts in <main> ran before layout script at bottom of <body>,
+// causing "apiFetch is not defined" on ALL pages (dashboard, catalog, onboarding, etc.)
+
 export function fashionLayout(title: string, content: string, activeNav?: string): string {
   return `<!DOCTYPE html>
 <html lang="id">
@@ -31,6 +35,71 @@ export function fashionLayout(title: string, content: string, activeNav?: string
       }
     }
   </script>
+
+  <!-- ============================================================= -->
+  <!-- CORE JS FUNCTIONS - MUST be in <head> so all page scripts can use them -->
+  <!-- These load BEFORE any <script> inside page content (<main>) -->
+  <!-- ============================================================= -->
+  <script>
+    var API_BASE = '';
+
+    function getToken() { return localStorage.getItem('fk_token'); }
+    function getStore() { try { return JSON.parse(localStorage.getItem('fk_store') || '{}'); } catch { return {}; } }
+
+    function authHeaders() {
+      var token = getToken();
+      return { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) };
+    }
+
+    async function apiFetch(url, options) {
+      if (!options) options = {};
+      try {
+        var res = await fetch(API_BASE + url, {
+          ...options,
+          headers: { ...authHeaders(), ...(options.headers || {}) }
+        });
+        var text = await res.text();
+        var data;
+        try { data = JSON.parse(text); } catch { throw new Error('Server response tidak valid: ' + text.substring(0, 100)); }
+        if (!res.ok || !data.success) throw new Error(data.message || 'API Error (' + res.status + ')');
+        return data;
+      } catch(e) {
+        if (e.message === 'Failed to fetch' || e.message.includes('NetworkError')) {
+          throw new Error('Koneksi gagal. Periksa internet Anda.');
+        }
+        throw e;
+      }
+    }
+
+    function showToast(msg, type) {
+      if (!type) type = 'success';
+      var container = document.getElementById('toastContainer');
+      if (!container) { container = document.createElement('div'); container.id = 'toastContainer'; document.body.appendChild(container); }
+      var t = document.createElement('div');
+      t.className = 'toast ' + type;
+      t.textContent = msg;
+      container.appendChild(t);
+      setTimeout(function() { t.remove(); }, 3000);
+    }
+
+    function formatRupiah(n) { return 'Rp ' + (n || 0).toLocaleString('id-ID'); }
+    function formatDate(d) { return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }); }
+
+    function logout() {
+      localStorage.removeItem('fk_token');
+      localStorage.removeItem('fk_store');
+      window.location.href = '/login';
+    }
+
+    // Auth check on protected pages (runs immediately in <head>)
+    if (!window.location.pathname.startsWith('/login') &&
+        !window.location.pathname.startsWith('/register') &&
+        !window.location.pathname.startsWith('/catalog/') &&
+        window.location.pathname !== '/') {
+      if (!getToken()) window.location.href = '/login';
+    }
+  </script>
+
   <style>
     body { font-family: 'Inter', sans-serif; background: #0A0A0A; color: #FFFFFF; }
     .glass-card { background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
@@ -103,7 +172,7 @@ export function fashionLayout(title: string, content: string, activeNav?: string
     </div>
   </nav>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN CONTENT (page scripts here can safely use apiFetch, getStore, etc.) -->
   <main class="pt-14 max-w-6xl mx-auto px-4">
     ${content}
   </main>
@@ -162,88 +231,37 @@ export function fashionLayout(title: string, content: string, activeNav?: string
   <!-- Toast container -->
   <div id="toastContainer"></div>
 
+  <!-- UI-only script (avatar, more menu, PWA) - runs after DOM is rendered -->
   <script>
-    const API_BASE = '';
-    
-    function getToken() { return localStorage.getItem('fk_token'); }
-    function getStore() { try { return JSON.parse(localStorage.getItem('fk_store') || '{}'); } catch { return {}; } }
-    
-    function authHeaders() {
-      const token = getToken();
-      return { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) };
-    }
-
-    async function apiFetch(url, options = {}) {
-      try {
-        const res = await fetch(API_BASE + url, { ...options, headers: { ...authHeaders(), ...options.headers } });
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch { throw new Error('Server response tidak valid: ' + text.substring(0, 100)); }
-        if (!res.ok || !data.success) throw new Error(data.message || 'API Error (' + res.status + ')');
-        return data;
-      } catch(e) {
-        if (e.message === 'Failed to fetch' || e.message.includes('NetworkError')) {
-          throw new Error('Koneksi gagal. Periksa internet Anda.');
-        }
-        throw e;
-      }
-    }
-
-    function showToast(msg, type = 'success') {
-      const t = document.createElement('div');
-      t.className = 'toast ' + type;
-      t.textContent = msg;
-      document.getElementById('toastContainer').appendChild(t);
-      setTimeout(() => t.remove(), 3000);
-    }
-
-    function formatRupiah(n) { return 'Rp ' + (n || 0).toLocaleString('id-ID'); }
-    function formatDate(d) { return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }); }
-
-    function logout() {
-      localStorage.removeItem('fk_token');
-      localStorage.removeItem('fk_store');
-      window.location.href = '/login';
-    }
-
     // More menu toggle
     function toggleMore(e) {
       e.stopPropagation();
-      const menu = document.getElementById('moreMenu');
-      menu.classList.toggle('show');
+      var menu = document.getElementById('moreMenu');
+      if (menu) menu.classList.toggle('show');
     }
-    document.addEventListener('click', () => {
-      const menu = document.getElementById('moreMenu');
+    document.addEventListener('click', function() {
+      var menu = document.getElementById('moreMenu');
       if (menu) menu.classList.remove('show');
     });
 
-    // Auth check on protected pages
-    if (!window.location.pathname.startsWith('/login') && 
-        !window.location.pathname.startsWith('/register') && 
-        !window.location.pathname.startsWith('/catalog/') &&
-        window.location.pathname !== '/') {
-      if (!getToken()) window.location.href = '/login';
-    }
-
-    // Set avatar from store data (wrapped in block to avoid const collision with page scripts)
-    {
-      const _layoutStore = getStore();
-      if (_layoutStore.name && document.getElementById('userAvatar')) {
-        document.getElementById('userAvatar').textContent = _layoutStore.name.substring(0, 2).toUpperCase();
+    // Set avatar from store data
+    (function() {
+      var s = getStore();
+      if (s.name && document.getElementById('userAvatar')) {
+        document.getElementById('userAvatar').textContent = s.name.substring(0, 2).toUpperCase();
       }
-    }
+    })();
 
     // Register service worker for PWA
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+      navigator.serviceWorker.register('/sw.js').catch(function() {});
     }
 
     // Install prompt handler
-    let deferredInstallPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
+    var deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       deferredInstallPrompt = e;
-      // Show install banner if not yet installed and not dismissed
       if (!localStorage.getItem('fk_pwa_dismissed')) {
         showInstallBanner();
       }
@@ -251,7 +269,7 @@ export function fashionLayout(title: string, content: string, activeNav?: string
 
     function showInstallBanner() {
       if (document.getElementById('installBanner')) return;
-      const banner = document.createElement('div');
+      var banner = document.createElement('div');
       banner.id = 'installBanner';
       banner.innerHTML = '<div style="position:fixed;bottom:76px;left:12px;right:12px;z-index:90;background:rgba(26,26,46,0.95);backdrop-filter:blur(16px);border:1px solid rgba(168,85,247,0.3);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,0.3)"><div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#A855F7,#7C3AED);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-download" style="color:white;font-size:16px"></i></div><div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:600;margin:0">Install FashionKas</p><p style="font-size:10px;color:#888;margin:2px 0 0">Akses cepat dari home screen</p></div><button onclick="installPWA()" style="background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">Install</button><button onclick="dismissInstall()" style="background:none;border:none;color:#666;cursor:pointer;font-size:14px;padding:4px"><i class="fa-solid fa-xmark"></i></button></div>';
       document.body.appendChild(banner);
@@ -260,9 +278,9 @@ export function fashionLayout(title: string, content: string, activeNav?: string
     window.installPWA = async function() {
       if (deferredInstallPrompt) {
         deferredInstallPrompt.prompt();
-        const result = await deferredInstallPrompt.userChoice;
+        var result = await deferredInstallPrompt.userChoice;
         deferredInstallPrompt = null;
-        const banner = document.getElementById('installBanner');
+        var banner = document.getElementById('installBanner');
         if (banner) banner.remove();
         if (result.outcome === 'accepted') showToast('FashionKas terinstall!');
       }
@@ -270,7 +288,7 @@ export function fashionLayout(title: string, content: string, activeNav?: string
 
     window.dismissInstall = function() {
       localStorage.setItem('fk_pwa_dismissed', '1');
-      const banner = document.getElementById('installBanner');
+      var banner = document.getElementById('installBanner');
       if (banner) banner.remove();
     };
   </script>

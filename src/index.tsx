@@ -89,7 +89,7 @@ app.route('/api/ai', aiRoutes)
 app.route('/api/webhook', webhookRoutes)
 
 // Health check
-app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '2.3', webhook: '/api/webhook/incoming', features: ['catalog', 'kasir', 'orders', 'wa-automation', 'r2-upload', 'fonnte-bot', 'subscriptions'] }))
+app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '2.4', webhook: '/api/webhook/incoming', features: ['catalog', 'kasir', 'orders', 'wa-automation', 'r2-upload', 'fonnte-bot', 'subscriptions'] }))
 
 // === PAGE ROUTES ===
 // Landing page

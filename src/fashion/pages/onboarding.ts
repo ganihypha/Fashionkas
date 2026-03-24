@@ -1,5 +1,5 @@
 // Onboarding Page - First-time user guided tour
-// FashionKas v2.3 - Fixed: apiFetch/getStore not defined (script execution order)
+// FashionKas v2.4 - Core JS now in <head>, all functions available immediately
 import { fashionLayout } from '../layout'
 
 export function onboardingPage(): string {
@@ -214,14 +214,12 @@ export function onboardingPage(): string {
   </div>
 
   <script>
-    // FashionKas Onboarding v2.2 - Fixed script execution order
-    // All code wrapped to avoid running before layout script defines getStore/apiFetch/showToast
-    // Using 'var' to avoid 'const' redeclaration conflicts with layout script
+    // FashionKas Onboarding v2.4 - Core JS (apiFetch, getStore, etc.) now in <head>
     var currentObStep = 1;
 
     function goStep(step) {
       currentObStep = step;
-      document.querySelectorAll('.onboard-step').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.onboard-step').forEach(function(el) { el.classList.add('hidden'); });
       var stepEl = document.getElementById('obStep' + step);
       if (stepEl) stepEl.classList.remove('hidden');
       var progEl = document.getElementById('stepProgress');
@@ -229,7 +227,6 @@ export function onboardingPage(): string {
       var barEl = document.getElementById('progressBar');
       if (barEl) barEl.style.width = (step * 25) + '%';
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Save progress to localStorage
       try { localStorage.setItem('fk_onboarding_step', step); } catch(e) {}
       if (step === 4) {
         try { localStorage.setItem('fk_onboarding_done', '1'); } catch(e) {}
@@ -267,12 +264,11 @@ export function onboardingPage(): string {
       if (errEl) errEl.classList.add('hidden');
       
       try {
-        if (typeof apiFetch !== 'function') throw new Error('Halaman belum siap, coba refresh browser');
         await apiFetch('/api/products', {
           method: 'POST',
           body: JSON.stringify({ name, price, cost_price: cost, stock, category })
         });
-        if (typeof showToast === 'function') showToast('Produk pertama berhasil ditambahkan!');
+        showToast('Produk pertama berhasil ditambahkan!');
         goStep(3);
       } catch(e) {
         if (errEl) { errEl.textContent = 'Gagal: ' + e.message; errEl.classList.remove('hidden'); }
@@ -285,45 +281,36 @@ export function onboardingPage(): string {
       if (!url) return;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(url);
-        if (typeof showToast === 'function') showToast('Link katalog disalin!');
+        showToast('Link katalog disalin!');
       } else {
         prompt('Copy link ini:', url);
       }
     }
 
     function shareWA() {
-      var obStore = (typeof getStore === 'function') ? getStore() : {};
+      var s = getStore();
       var url = document.getElementById('obCatalogUrl')?.value || '';
-      var msg = 'Hai! Yuk lihat koleksi terbaru kami:\\n\\n*' + (obStore.name || 'Fashion Store') + '*\\n' + url + '\\n\\nPesan langsung via WhatsApp!';
+      var msg = 'Hai! Yuk lihat koleksi terbaru kami:\\n\\n*' + (s.name || 'Fashion Store') + '*\\n' + url + '\\n\\nPesan langsung via WhatsApp!';
       window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
     }
 
-    // === DEFERRED INITIALIZATION ===
-    // This code MUST run after the layout script has loaded (which defines getStore, apiFetch, etc.)
-    // Using setTimeout(0) to defer execution to the next event loop tick, after all sync scripts finish
-    setTimeout(function() {
-      // Auto-fill catalog URL from store data
-      try {
-        var obStore = (typeof getStore === 'function') ? getStore() : {};
-        var catalogUrl = window.location.origin + '/catalog/' + (obStore.slug || '');
-        var urlEl = document.getElementById('obCatalogUrl');
-        if (urlEl) urlEl.value = catalogUrl;
-      } catch(e) {
-        console.warn('[Onboarding] Could not load store data:', e.message);
-      }
+    // Initialize: fill catalog URL, attach listeners, restore step
+    (function() {
+      var s = getStore();
+      var catalogUrl = window.location.origin + '/catalog/' + (s.slug || '');
+      var urlEl = document.getElementById('obCatalogUrl');
+      if (urlEl) urlEl.value = catalogUrl;
 
-      // Attach profit calculator listeners
       var priceEl = document.getElementById('obPrice');
       var costEl = document.getElementById('obCost');
       if (priceEl) priceEl.addEventListener('input', updateProfit);
       if (costEl) costEl.addEventListener('input', updateProfit);
 
-      // Restore last step if returning
       try {
         var savedStep = localStorage.getItem('fk_onboarding_step');
         if (savedStep && parseInt(savedStep) > 1) goStep(parseInt(savedStep));
       } catch(e) {}
-    }, 0);
+    })();
   </script>`
   
   return fashionLayout('Selamat Datang', content, 'dashboard')
