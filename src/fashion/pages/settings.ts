@@ -74,41 +74,127 @@ export function settingsPage(): string {
     <div class="glass-card rounded-xl p-5 border border-green-500/20">
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-heading font-bold text-sm"><i class="fa-brands fa-whatsapp mr-2 text-green-400"></i>WhatsApp Automation</h2>
-        <span id="fonnteBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-gray-500/15 text-gray-400">Belum Aktif</span>
+        <span id="fonnteBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-gray-500/15 text-gray-400">Mengecek...</span>
       </div>
-      <p class="text-xs text-gray-400 mb-3">Kirim struk, notifikasi pengiriman, dan promo otomatis via WhatsApp menggunakan Fonnte API.</p>
+      
+      <!-- Fonnte Status Card -->
+      <div id="fonnteStatusCard" class="glass-card rounded-xl p-3 border border-white/5 mb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+            <i class="fa-brands fa-whatsapp text-green-400 text-lg"></i>
+          </div>
+          <div class="flex-1 min-w-0" id="fonnteStatusInfo">
+            <p class="text-sm font-medium">Fonnte.com</p>
+            <p class="text-[10px] text-gray-500">Memuat status...</p>
+          </div>
+          <a href="https://fonnte.com" target="_blank" class="text-xs text-green-400 hover:underline">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Fonnte Quota & Device Info -->
+      <div id="fonnteQuotaInfo" class="hidden grid grid-cols-3 gap-2 mb-3">
+        <div class="text-center p-2 rounded-lg bg-white/5 border border-white/5">
+          <p id="fonnteQuota" class="font-mono font-bold text-green-400 text-sm">-</p>
+          <p class="text-[9px] text-gray-500">Kuota Sisa</p>
+        </div>
+        <div class="text-center p-2 rounded-lg bg-white/5 border border-white/5">
+          <p id="fonnteSent" class="font-mono font-bold text-fk-purple text-sm">-</p>
+          <p class="text-[9px] text-gray-500">Terkirim</p>
+        </div>
+        <div class="text-center p-2 rounded-lg bg-white/5 border border-white/5">
+          <p id="fonntePackage" class="font-mono font-bold text-amber-400 text-sm">-</p>
+          <p class="text-[9px] text-gray-500">Paket</p>
+        </div>
+      </div>
+      
+      <!-- Image Sending Warning for Free Plan -->
+      <div id="fonnteImageWarning" class="hidden bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 mb-3">
+        <p class="text-[10px] text-amber-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i>Paket Free: Kirim Gambar Tidak Tersedia</p>
+        <p class="text-[10px] text-gray-400">Upgrade ke paket Super (Rp45rb/bln) untuk kirim gambar produk via WA. Saat ini, FashionKas akan kirim link katalog sebagai alternatif.</p>
+      </div>
+      
+      <!-- Webhook URL Config -->
+      <div class="bg-empire-dark rounded-xl p-3 border border-white/5 mb-3">
+        <p class="text-[10px] text-gray-400 font-medium mb-2"><i class="fa-solid fa-webhook mr-1 text-fk-purple"></i>Webhook URL (untuk Auto-Reply Bot)</p>
+        <div class="flex items-center gap-2">
+          <input type="text" id="webhookUrl" readonly class="flex-1 px-3 py-2 rounded-lg bg-empire-dark border border-white/10 text-[10px] font-mono text-green-400 truncate" value="">
+          <button onclick="copyWebhookUrl()" class="px-3 py-2 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-xs hover:bg-green-500/20">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+        </div>
+        <p class="text-[9px] text-gray-600 mt-1.5">Paste URL ini di Fonnte > Device > Edit > Webhook</p>
+      </div>
+      
+      <div class="space-y-2">
+        <p class="text-xs text-gray-400 font-medium">Fitur WA Otomatis:</p>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-receipt text-green-400 text-[10px]"></i>Auto-kirim struk</div>
+          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-truck text-blue-400 text-[10px]"></i>Notif pengiriman</div>
+          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-bullhorn text-amber-400 text-[10px]"></i>Broadcast promo</div>
+          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-reply text-fk-purple text-[10px]"></i>Auto-reply 24/7</div>
+          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-robot text-cyan-400 text-[10px]"></i>Bot CLI Commands</div>
+          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-chart-bar text-amber-400 text-[10px]"></i>Audit via WA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscription Tiers -->
+    <div class="glass-card rounded-xl p-5 border border-fk-purple/20">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-heading font-bold text-sm"><i class="fa-solid fa-crown mr-2 text-amber-400"></i>Langganan</h2>
+        <span id="currentTierBadge" class="text-[10px] px-2 py-0.5 rounded-full fk-gradient text-white font-bold">BETA</span>
+      </div>
+      
       <div class="space-y-3">
-        <div class="glass-card rounded-xl p-3 border border-white/5">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-              <i class="fa-brands fa-whatsapp text-green-400 text-lg"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium">Fonnte.com</p>
-              <p class="text-[10px] text-gray-500">Rp 45.000/bulan - Unlimited WA Message</p>
-            </div>
-            <a href="https://fonnte.com" target="_blank" class="text-xs text-green-400 hover:underline">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            </a>
+        <!-- Free/Beta Tier -->
+        <div class="glass-card rounded-xl p-4 border border-green-500/20 relative overflow-hidden">
+          <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-xl bg-green-500/20 text-green-400 text-[9px] font-bold">AKTIF</div>
+          <h3 class="font-heading font-bold text-sm text-green-400 mb-2">Beta Gratis</h3>
+          <p class="text-2xl font-heading font-bold mb-1">Rp 0<span class="text-xs text-gray-500 font-normal">/bln</span></p>
+          <div class="space-y-1 mt-3">
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Unlimited produk & pesanan</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Katalog online</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>WA Auto-reply bot</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Dashboard & laporan</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-400"><i class="fa-solid fa-xmark text-gray-600 text-[9px]"></i>Kirim gambar via WA</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-400"><i class="fa-solid fa-xmark text-gray-600 text-[9px]"></i>Custom domain katalog</div>
           </div>
         </div>
-        <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10">
-          <p class="text-[10px] text-amber-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i>Cara Setup:</p>
-          <ol class="text-[10px] text-gray-400 space-y-1 pl-4 list-decimal">
-            <li>Daftar di <a href="https://fonnte.com" target="_blank" class="text-green-400 hover:underline">fonnte.com</a></li>
-            <li>Hubungkan nomor WhatsApp Anda</li>
-            <li>Copy token API dari dashboard Fonnte</li>
-            <li>FashionKas otomatis kirim struk & notifikasi!</li>
-          </ol>
-        </div>
-        <div class="space-y-2">
-          <p class="text-xs text-gray-400 font-medium">Fitur WA Otomatis:</p>
-          <div class="grid grid-cols-2 gap-2">
-            <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-receipt text-green-400 text-[10px]"></i>Auto-kirim struk</div>
-            <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-truck text-blue-400 text-[10px]"></i>Notif pengiriman</div>
-            <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-bullhorn text-amber-400 text-[10px]"></i>Broadcast promo</div>
-            <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-reply text-fk-purple text-[10px]"></i>Auto-reply</div>
+        
+        <!-- Pro Tier -->
+        <div class="glass-card rounded-xl p-4 border border-fk-purple/20 relative overflow-hidden">
+          <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-xl bg-fk-purple/20 text-fk-purple text-[9px] font-bold">SEGERA</div>
+          <h3 class="font-heading font-bold text-sm text-fk-purple mb-2">Pro</h3>
+          <p class="text-2xl font-heading font-bold mb-1">Rp 49.000<span class="text-xs text-gray-500 font-normal">/bln</span></p>
+          <div class="space-y-1 mt-3">
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Semua fitur Beta</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Upload gambar R2 unlimited</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Kirim gambar via WA (Super plan)</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>AI Scout & Closer agents</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Priority support</div>
           </div>
+          <button onclick="showToast('Segera hadir! Semua fitur masih gratis selama beta 🎉', 'info')" class="w-full mt-4 py-2.5 rounded-xl bg-fk-purple/10 text-fk-purple border border-fk-purple/20 text-xs font-bold hover:bg-fk-purple/20 transition-all">
+            <i class="fa-solid fa-bell mr-1"></i>Notify Saat Tersedia
+          </button>
+        </div>
+        
+        <!-- Enterprise Tier -->
+        <div class="glass-card rounded-xl p-4 border border-amber-500/20 relative overflow-hidden">
+          <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-xl bg-amber-500/20 text-amber-400 text-[9px] font-bold">SEGERA</div>
+          <h3 class="font-heading font-bold text-sm text-amber-400 mb-2">Enterprise</h3>
+          <p class="text-2xl font-heading font-bold mb-1">Rp 149.000<span class="text-xs text-gray-500 font-normal">/bln</span></p>
+          <div class="space-y-1 mt-3">
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>Semua fitur Pro</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>Custom domain</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>Multi-store management</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>WhatsApp multi-device</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>API access & webhook custom</div>
+          </div>
+          <button onclick="showToast('Segera hadir! Hubungi kami via WA untuk early access 🎉', 'info')" class="w-full mt-4 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold hover:bg-amber-500/20 transition-all">
+            <i class="fa-solid fa-bell mr-1"></i>Notify Saat Tersedia
+          </button>
         </div>
       </div>
     </div>
@@ -189,23 +275,6 @@ export function settingsPage(): string {
         <div class="flex justify-between text-sm"><span class="text-gray-400">Database</span><span class="text-gray-300">Supabase PostgreSQL</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-400">WhatsApp</span><span class="text-gray-300">Fonnte API</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-400">Status</span><span class="text-green-400"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Online</span></div>
-      </div>
-    </div>
-
-    <!-- Beta Badge -->
-    <div class="glass-card rounded-xl p-5 border border-fk-purple/20 fk-glow">
-      <div class="text-center">
-        <span class="inline-block px-4 py-1 rounded-full fk-gradient text-white text-xs font-bold mb-3">BETA ACCESS</span>
-        <h3 class="font-heading font-bold text-lg text-fk-purple mb-1">Semua Fitur Gratis!</h3>
-        <p class="text-xs text-gray-500 mb-4">Selama masa beta, semua fitur FashionKas bisa dipakai tanpa bayar.</p>
-        <div class="grid grid-cols-2 gap-2 text-left max-w-xs mx-auto">
-          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-check-circle text-green-400"></i>Kasir Unlimited</div>
-          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-check-circle text-green-400"></i>Katalog Online</div>
-          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-check-circle text-green-400"></i>Order Management</div>
-          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-check-circle text-green-400"></i>Dashboard Lengkap</div>
-          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-check-circle text-green-400"></i>WA Automation</div>
-          <div class="flex items-center gap-2 text-xs text-gray-300"><i class="fa-solid fa-check-circle text-green-400"></i>Export Data</div>
-        </div>
       </div>
     </div>
 
@@ -379,6 +448,52 @@ export function settingsPage(): string {
     }
 
     loadStoreInfo();
+    loadFonnteStatus();
+    
+    // Set webhook URL
+    const webhookBase = window.location.origin || 'https://fashionkas.pages.dev';
+    document.getElementById('webhookUrl').value = webhookBase + '/api/webhook/incoming';
+    
+    async function loadFonnteStatus() {
+      try {
+        const res = await apiFetch('/api/wa/status');
+        const data = res.data;
+        const badge = document.getElementById('fonnteBadge');
+        const info = document.getElementById('fonnteStatusInfo');
+        const quotaDiv = document.getElementById('fonnteQuotaInfo');
+        const warningDiv = document.getElementById('fonnteImageWarning');
+        
+        if (data.connected) {
+          badge.textContent = 'Terhubung';
+          badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-green-500/15 text-green-400';
+          info.innerHTML = '<p class="text-sm font-medium text-green-400">' + (data.name || 'Fonnte Device') + '</p><p class="text-[10px] text-gray-500">Nomor: ' + (data.device || '-') + ' | Exp: ' + (data.expired || '-') + '</p>';
+          
+          // Show quota
+          quotaDiv.classList.remove('hidden');
+          document.getElementById('fonnteQuota').textContent = data.quota || '0';
+          document.getElementById('fonnteSent').textContent = data.messages || '0';
+          document.getElementById('fonntePackage').textContent = data.package || 'Free';
+          
+          // Show image warning if Free plan
+          if (data.package === 'Free' || !data.attachment) {
+            warningDiv.classList.remove('hidden');
+          }
+        } else {
+          badge.textContent = 'Tidak Terhubung';
+          badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-red-500/15 text-red-400';
+          info.innerHTML = '<p class="text-sm font-medium">Fonnte.com</p><p class="text-[10px] text-red-400">' + (data.message || 'Device tidak terhubung') + '</p>';
+        }
+      } catch(e) {
+        document.getElementById('fonnteBadge').textContent = 'Error';
+        document.getElementById('fonnteBadge').className = 'text-[10px] px-2 py-0.5 rounded-full bg-red-500/15 text-red-400';
+      }
+    }
+    
+    function copyWebhookUrl() {
+      const url = document.getElementById('webhookUrl').value;
+      if (navigator.clipboard) { navigator.clipboard.writeText(url); showToast('Webhook URL disalin!'); }
+      else { prompt('Copy URL ini:', url); }
+    }
   </script>`
   
   return fashionLayout('Pengaturan', content, 'settings')

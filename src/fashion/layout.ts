@@ -174,10 +174,19 @@ export function fashionLayout(title: string, content: string, activeNav?: string
     }
 
     async function apiFetch(url, options = {}) {
-      const res = await fetch(API_BASE + url, { ...options, headers: { ...authHeaders(), ...options.headers } });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.message || 'API Error');
-      return data;
+      try {
+        const res = await fetch(API_BASE + url, { ...options, headers: { ...authHeaders(), ...options.headers } });
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); } catch { throw new Error('Server response tidak valid: ' + text.substring(0, 100)); }
+        if (!res.ok || !data.success) throw new Error(data.message || 'API Error (' + res.status + ')');
+        return data;
+      } catch(e) {
+        if (e.message === 'Failed to fetch' || e.message.includes('NetworkError')) {
+          throw new Error('Koneksi gagal. Periksa internet Anda.');
+        }
+        throw e;
+      }
     }
 
     function showToast(msg, type = 'success') {

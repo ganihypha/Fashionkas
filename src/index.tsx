@@ -1,6 +1,6 @@
-// FashionKas v2.1 - Main Application Entry Point
+// FashionKas v2.2 - Main Application Entry Point
 // Kasir Digital + Katalog Online + WA Automation + AI Agents + Fonnte Webhook Bot
-// PWA + Onboarding + DP/Lunas Payment Status
+// PWA + Onboarding + DP/Lunas + R2 Image Upload + Subscription Tiers
 // untuk Fashion Reseller Indonesia
 
 import { Hono } from 'hono'
@@ -89,7 +89,7 @@ app.route('/api/ai', aiRoutes)
 app.route('/api/webhook', webhookRoutes)
 
 // Health check
-app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '2.1', webhook: '/api/webhook/incoming' }))
+app.get('/api/health', (c) => c.json({ status: 'ok', app: 'FashionKas', version: '2.2', webhook: '/api/webhook/incoming', features: ['catalog', 'kasir', 'orders', 'wa-automation', 'r2-upload', 'fonnte-bot', 'subscriptions'] }))
 
 // === PAGE ROUTES ===
 // Landing page

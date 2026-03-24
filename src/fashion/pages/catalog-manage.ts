@@ -168,9 +168,31 @@ export function catalogManagePage(): string {
             <button onclick="quickColor('Pink,Cream,Mocca')" class="text-[9px] px-2 py-0.5 rounded bg-white/5 text-gray-500 hover:text-fk-purple">Pastel</button>
           </div>
         </div>
+        <!-- Image Upload Section -->
         <div>
-          <label class="text-xs text-gray-400 font-medium mb-1 block">URL Gambar</label>
-          <input type="text" id="pImage" placeholder="https://..." oninput="previewImage()" class="w-full px-3 py-2.5 rounded-xl bg-empire-dark border border-white/10 text-sm">
+          <label class="text-xs text-gray-400 font-medium mb-1 block">Gambar Produk</label>
+          <div id="uploadDropZone" class="w-full p-3 rounded-xl bg-empire-dark border-2 border-dashed border-white/10 hover:border-fk-purple/30 transition-all cursor-pointer text-center"
+            onclick="document.getElementById('fileUpload').click()"
+            ondragover="event.preventDefault();this.classList.add('border-fk-purple/50','bg-fk-purple/5')"
+            ondragleave="this.classList.remove('border-fk-purple/50','bg-fk-purple/5')"
+            ondrop="event.preventDefault();this.classList.remove('border-fk-purple/50','bg-fk-purple/5');handleFileDrop(event)">
+            <div id="uploadStatus">
+              <i class="fa-solid fa-cloud-arrow-up text-gray-600 text-lg mb-1"></i>
+              <p class="text-[10px] text-gray-500">Tap atau drag foto (max 5MB)</p>
+              <p class="text-[9px] text-gray-600">JPG, PNG, WebP, GIF</p>
+            </div>
+            <input type="file" id="fileUpload" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" onchange="handleFileSelect(event)">
+          </div>
+          <div class="flex gap-2 mt-2">
+            <button onclick="captureCamera()" class="flex-1 text-[10px] px-2 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20">
+              <i class="fa-solid fa-camera mr-1"></i>Kamera
+            </button>
+            <button onclick="toggleUrlInput()" class="flex-1 text-[10px] px-2 py-1.5 rounded-lg bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10">
+              <i class="fa-solid fa-link mr-1"></i>URL Manual
+            </button>
+          </div>
+          <input type="text" id="pImage" placeholder="https://... (URL gambar)" oninput="previewImage()" class="hidden w-full mt-2 px-3 py-2.5 rounded-xl bg-empire-dark border border-white/10 text-sm">
+          <input type="file" id="cameraCapture" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
         </div>
         <div>
           <label class="text-xs text-gray-400 font-medium mb-1 block">Deskripsi</label>
@@ -304,13 +326,17 @@ export function catalogManagePage(): string {
     function showAddModal() {
       document.getElementById('modalTitle').textContent = 'Tambah Produk';
       document.getElementById('editId').value = '';
-      ['pName','pPrice','pCost','pSizes','pColors','pImage','pDesc'].forEach(id => document.getElementById(id).value = '');
+      ['pName','pPrice','pCost','pSizes','pColors','pDesc'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('pImage').value = '';
+      document.getElementById('pImage').classList.add('hidden');
       document.getElementById('pCategory').value = 'gamis';
       document.getElementById('pStock').value = '0';
       document.getElementById('pFeatured').checked = false;
       document.getElementById('modalError').classList.add('hidden');
       document.getElementById('profitCalc').classList.add('hidden');
       document.getElementById('imagePreview').innerHTML = '<div class="text-center text-gray-600"><i class="fa-solid fa-image text-2xl mb-1"></i><p class="text-[10px]">Preview gambar</p></div>';
+      document.getElementById('uploadStatus').innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-gray-600 text-lg mb-1"></i><p class="text-[10px] text-gray-500">Tap atau drag foto (max 5MB)</p><p class="text-[9px] text-gray-600">JPG, PNG, WebP, GIF</p>';
+      currentUploadUrl = '';
       document.getElementById('productModal').classList.remove('hidden');
     }
 
@@ -435,6 +461,84 @@ export function catalogManagePage(): string {
       if (navigator.clipboard) { navigator.clipboard.writeText(url); showToast('Link katalog disalin!'); }
       const waMsg = 'Lihat katalog produk kami:\\n' + url;
       window.open('https://wa.me/?text=' + encodeURIComponent(waMsg), '_blank');
+    }
+
+    // ===== Image Upload Functions =====
+    let currentUploadUrl = '';
+    
+    function toggleUrlInput() {
+      const urlInput = document.getElementById('pImage');
+      urlInput.classList.toggle('hidden');
+      if (!urlInput.classList.contains('hidden')) urlInput.focus();
+    }
+    
+    function captureCamera() {
+      document.getElementById('cameraCapture').click();
+    }
+    
+    function handleFileDrop(e) {
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) uploadFile(files[0]);
+    }
+    
+    function handleFileSelect(e) {
+      const files = e.target?.files;
+      if (files && files.length > 0) uploadFile(files[0]);
+    }
+    
+    async function uploadFile(file) {
+      const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!allowed.includes(file.type)) {
+        showToast('Format tidak didukung! Gunakan JPG/PNG/WebP/GIF', 'error');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('File terlalu besar! Maks 5MB', 'error');
+        return;
+      }
+      
+      const statusEl = document.getElementById('uploadStatus');
+      statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-fk-purple text-lg mb-1"></i><p class="text-[10px] text-fk-purple">Mengupload...</p>';
+      
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const res = await fetch('/api/images/upload', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + getToken() },
+          body: formData
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          currentUploadUrl = data.data.url;
+          document.getElementById('pImage').value = currentUploadUrl;
+          
+          // Show preview
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            document.getElementById('imagePreview').innerHTML = '<img src="' + e.target.result + '" class="product-img-cover rounded-xl">';
+          };
+          reader.readAsDataURL(file);
+          
+          statusEl.innerHTML = '<i class="fa-solid fa-check-circle text-green-400 text-lg mb-1"></i><p class="text-[10px] text-green-400">Upload berhasil!</p><p class="text-[9px] text-gray-500">Tap untuk ganti foto</p>';
+          showToast('Foto berhasil diupload!');
+        } else {
+          throw new Error(data.message || 'Upload gagal');
+        }
+      } catch(e) {
+        // Fallback: use base64 locally
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          currentUploadUrl = ev.target.result;
+          document.getElementById('pImage').value = currentUploadUrl;
+          document.getElementById('imagePreview').innerHTML = '<img src="' + currentUploadUrl + '" class="product-img-cover rounded-xl">';
+          statusEl.innerHTML = '<i class="fa-solid fa-check-circle text-amber-400 text-lg mb-1"></i><p class="text-[10px] text-amber-400">Pakai mode lokal</p><p class="text-[9px] text-gray-500">R2 belum aktif, gambar disimpan sebagai base64</p>';
+        };
+        reader.readAsDataURL(file);
+        showToast('R2 belum aktif - pakai mode base64', 'info');
+      }
     }
 
     loadCatalog();
