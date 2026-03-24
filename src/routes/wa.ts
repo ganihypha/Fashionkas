@@ -1,8 +1,8 @@
 // WhatsApp Automation Routes - FULL Fonnte API Integration
 // FashionKas v1.2.1 - Deep dive Fonnte docs integration
 // API Reference: https://docs.fonnte.com/api-send-message/
-// Device Token: nseB3E9fxb2iFqzTbGDB
-// Account Token: XRtj8ey4urpRjS9vuZNaG44XkpBkYRnjfYCPgW37GEcGZ2t
+// Device Token: from env FONNTE_TOKEN
+// Account Token: from env FONNTE_ACCOUNT_TOKEN
 
 import { Hono } from 'hono'
 import { createSupabaseClient, verifyJWT } from '../lib/supabase'
