@@ -1,312 +1,154 @@
-# FashionKas v2.1
-## Katalog + Kasir Digital + WhatsApp Bot + PWA untuk Fashion Reseller Indonesia
+# FashionKas v2.2
+## Katalog + Kasir Digital + WhatsApp Bot + R2 Upload + Subscription Tiers untuk Fashion Reseller Indonesia
 
 **Production**: https://fashionkas.pages.dev
 **GitHub**: https://github.com/ganihypha/Fashionkas
 **Webhook URL**: https://fashionkas.pages.dev/api/webhook/incoming
-**Sandbox**: https://3000-i1uevkn4lzjwuc2yqlrjg-2b54fc91.sandbox.novita.ai
 
 ---
 
-## Completed Features (v2.1)
+## Completed Features (v2.2)
 
-### New in v2.1
+### New in v2.2
+- **R2 Image Upload UI** - Drag-drop + camera capture untuk upload foto produk langsung ke Cloudflare R2
+- **Fonnte Device Status** - Real-time status Fonnte (kuota, paket, koneksi) di Settings
+- **Webhook URL Helper** - Copy-paste webhook URL untuk setup Fonnte auto-reply bot
+- **Subscription Tiers** - UI tiers Beta (gratis) / Pro (Rp49rb) / Enterprise (Rp149rb)
+- **Image Sending Warning** - Alert jelas jika Fonnte paket Free (tidak bisa kirim gambar)
+- **Better Error Handling** - apiFetch sekarang handle network error + response parsing robustly
+- **Version 2.2 Health Check** - `/api/health` menampilkan semua fitur aktif
+
+### Previous v2.1
 - **PWA Support** - Install FashionKas langsung dari browser ke home screen HP
-- **Onboarding Flow** - 4-step guided setup untuk user baru (add product > share catalog > done)
+- **Onboarding Flow** - 4-step guided setup untuk user baru
 - **DP/Lunas Payment Status** - Support Down Payment (DP), Lunas, dan Belum Bayar di POS
-- **Offline Support** - Service worker + cache fallback + offline page
-- **Install Banner** - Auto-prompt install PWA di mobile
-- **Order Bug Fix** - Bulletproof product_name resolution with DB fallback lookup
+- **Offline Support** - Service worker + cache fallback
 
 ### Kasir Digital (POS) - 100%
 - Tambah produk ke keranjang dengan size/color picker
 - Hitung otomatis total, profit, stok
 - Payment methods: Cash, Transfer, COD, Marketplace
-- **Payment status: Lunas / DP / Belum Bayar** (NEW v2.1)
+- Payment status: Lunas / DP / Belum Bayar
 - Auto-kirim struk via WhatsApp (Fonnte)
 - Quick discount & shipping buttons
 - Product search & category filter
-- Grid/list view toggle
 
-### Katalog Digital - 100%
-- Upload produk (nama, harga, foto, ukuran, warna)
-- 1 link katalog shareable ke semua customer
-- Public catalog: `https://fashionkas.pages.dev/catalog/{slug}`
-- Tombol "Pesan" langsung buka WhatsApp
-- Featured products, inventory value tracker
+### Katalog Online - 100%
+- CRUD produk dengan gambar, ukuran, warna
+- **R2 image upload with drag-drop & camera** (NEW v2.2)
+- Category filter & search
+- Featured product toggle
+- Inventory value & profit calculator
+- Share katalog via WhatsApp
+- Public catalog page (no auth) `/catalog/:slug`
+
+### Order Management - 100%
+- List pesanan dengan filter status
+- Update status: pending > processing > shipped > delivered
+- Track resi otomatis
+- Customer auto-create/update
 
 ### WhatsApp Automation (Fonnte) - 100%
-- Auto-kirim struk setelah transaksi
-- Notifikasi pengiriman + tracking resi
-- Broadcast promo ke segmen customer
-- Kirim pesan custom + scheduling
-- Validate nomor WhatsApp
-- Message history & analytics
-- Device status + quota monitoring
+- Auto-kirim struk WA dari POS
+- Notifikasi pengiriman + tracking
+- Broadcast promo ke customer segment
+- Custom message sender
+- Multi-step messages (data parameter)
+- Poll & location sending
+- **Real-time Fonnte status display** (NEW v2.2)
+- **Webhook URL helper** (NEW v2.2)
 
-### WhatsApp Bot (Webhook) - 100%
-Webhook auto-reply via Fonnte. Kirim command ke nomor WA toko:
+### WhatsApp Auto-Reply Bot - 100%
+- HELP/MENU - Menu bantuan
+- KATALOG/HARGA - Daftar produk & harga
+- CARI [keyword] - Pencarian produk
+- ORDER [produk] - Request order
+- CEK [no order] - Status pesanan
+- KATEGORI [nama] - Browse per kategori
+- Admin: STOK, LAPORAN, OMZET, AUDIT
 
-**Customer Commands:**
-| Command | Fungsi |
-|---------|--------|
-| `HELP` / `MENU` | Lihat semua perintah |
-| `KATALOG` | Lihat semua produk + harga |
-| `HARGA` | Daftar harga |
-| `CARI [nama]` | Cari produk |
-| `ORDER [produk]` | Pesan produk |
-| `CEK [no order]` | Cek status pesanan |
-| `KATEGORI` | Lihat kategori |
-| `INFO` | Info toko |
-| `PROMO` | Promo terbaru |
+### Dashboard & Reports - 100%
+- Revenue, profit, orders per hari/minggu/bulan
+- Top products & low stock alerts
+- Customer analytics
+- 7-day revenue chart
+- Export CSV (produk, pesanan, customer)
 
-**Admin Commands (Owner Only):**
-| Command | Fungsi |
-|---------|--------|
-| `STOK` | Alert stok rendah/habis |
-| `LAPORAN` | Ringkasan hari ini |
-| `OMZET` | Omzet bulan ini + breakdown |
-| `AUDIT` | Full audit toko lengkap |
+### Settings - 100%
+- Edit profil toko
+- Share katalog link
+- **Fonnte status + quota display** (NEW v2.2)
+- **Webhook URL config** (NEW v2.2)
+- **Subscription tiers UI** (NEW v2.2)
+- Change PIN
+- Data export (CSV)
 
-### Dashboard & Analytics - 100%
-- Pendapatan harian/mingguan/bulanan + all-time
-- Produk terlaris (top 5)
-- Alert stok rendah & habis
-- Grafik revenue 7 hari (Chart.js)
-- Recent orders list
-- Quick action cards
-
-### Scout AI (Lead Scoring) - 100%
-- RFM scoring (Recency, Frequency, Monetary)
-- Segment classification (VIP, Loyal, Warm, At Risk, Cold)
-- Churn prediction
-- Category preferences per customer
-
-### Closer AI (WA Outreach) - 100%
-- Smart follow-up suggestions
-- Template messages (Thank You, Promo, Re-engage, VIP, Win Back)
-- Bulk send via Fonnte with random delay (anti-ban)
-- Auto-personalize per customer
-
-### Reports - 100%
-- Monthly revenue/profit breakdown
-- Daily data for charts
-- Payment method analysis
-- Category breakdown
-- CSV export (products, orders, customers)
-
-### Auth System - 100%
-- PIN-based registration (4-6 digit)
-- JWT auth (30-day expiry)
-- Store profile management (name, city, description)
-- PIN change
-- **Onboarding redirect after registration** (NEW v2.1)
-
-### PWA (NEW v2.1) - 100%
-- manifest.json for installability
-- Service worker with network-first cache
-- Offline page fallback
-- Install prompt banner
-- Apple mobile web app meta tags
+### AI Agents (Basic) - 50%
+- Scout Agent - Lead scoring interface
+- Closer Agent - Follow-up outreach interface
+- ScraperAPI integration for market research
 
 ---
 
-## Pages & Routes
-
-| # | Page | URL | Auth |
-|---|------|-----|------|
-| 1 | Landing | `/` | No |
-| 2 | Login | `/login` | No |
-| 3 | Register | `/register` | No |
-| 4 | **Onboarding** | `/fashionkas/onboarding` | JWT |
-| 5 | Dashboard | `/fashionkas/dashboard` | JWT |
-| 6 | POS / Kasir | `/fashionkas/sale` | JWT |
-| 7 | Catalog Manager | `/fashionkas/catalog` | JWT |
-| 8 | Orders | `/fashionkas/orders` | JWT |
-| 9 | Settings | `/fashionkas/settings` | JWT |
-| 10 | WA Automation | `/fashionkas/wa` | JWT |
-| 11 | Reports | `/fashionkas/reports` | JWT |
-| 12 | Scout AI | `/fashionkas/scout` | JWT |
-| 13 | Closer AI | `/fashionkas/closer` | JWT |
-| 14 | Public Catalog | `/catalog/:slug` | No |
-
----
-
-## API Endpoints (30+)
+## API Endpoints
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | `/api/health` | No | Health check (v2.1) |
-| POST | `/api/auth/register` | No | Daftar toko baru |
-| POST | `/api/auth/login` | No | Login (phone+PIN) |
-| GET | `/api/auth/me` | JWT | Get current user |
-| PUT | `/api/auth/store` | JWT | Update store profile |
-| PUT | `/api/auth/change-pin` | JWT | Change PIN |
-| GET | `/api/products` | JWT | List produk |
-| POST | `/api/products` | JWT | Tambah produk |
-| PUT | `/api/products/:id` | JWT | Update produk |
-| DELETE | `/api/products/:id` | JWT | Hapus produk |
-| GET | `/api/products/public/:slug` | No | Katalog publik |
-| GET | `/api/orders` | JWT | List pesanan |
-| POST | `/api/orders` | JWT | Buat pesanan (DP/Lunas/Pending) |
-| PUT | `/api/orders/:id` | JWT | Update status |
-| GET | `/api/customers` | JWT | List customers |
-| POST | `/api/customers` | JWT | Add customer |
-| GET | `/api/dashboard/stats` | JWT | Dashboard stats |
-| GET | `/api/wa/status` | JWT | Fonnte device status |
-| GET | `/api/wa/devices` | JWT | List devices |
-| POST | `/api/wa/validate` | JWT | Validate WA number |
-| POST | `/api/wa/send-receipt` | JWT | Kirim struk WA |
-| POST | `/api/wa/send-shipping` | JWT | Notif pengiriman |
-| POST | `/api/wa/broadcast` | JWT | Broadcast promo |
-| POST | `/api/wa/send-custom` | JWT | Pesan custom |
-| GET | `/api/wa/history` | JWT | Riwayat WA |
-| GET | `/api/wa/quota` | JWT | Check quota |
-| GET | `/api/ai/scout/scores` | JWT | Customer scores |
-| GET | `/api/ai/scout/insights` | JWT | Business insights |
-| GET | `/api/ai/closer/suggestions` | JWT | Follow-up suggestions |
-| POST | `/api/ai/closer/send` | JWT | Send follow-up |
-| POST | `/api/ai/closer/send-bulk` | JWT | Bulk follow-up |
-| GET | `/api/ai/closer/templates` | JWT | Message templates |
-| POST | `/api/images/upload` | JWT | Upload image (R2/base64) |
+| GET | `/api/health` | No | Health check + version |
+| POST | `/api/auth/register` | No | Register new store |
+| POST | `/api/auth/login` | No | Login with phone+PIN |
+| GET | `/api/auth/me` | Yes | Get current store info |
+| PUT | `/api/auth/store` | Yes | Update store profile |
+| PUT | `/api/auth/change-pin` | Yes | Change PIN |
+| GET | `/api/products` | Yes | List products |
+| POST | `/api/products` | Yes | Create product |
+| PUT | `/api/products/:id` | Yes | Update product |
+| DELETE | `/api/products/:id` | Yes | Delete product |
+| GET | `/api/products/public/:slug` | No | Public catalog |
+| GET | `/api/orders` | Yes | List orders |
+| POST | `/api/orders` | Yes | Create order |
+| PUT | `/api/orders/:id` | Yes | Update order status |
+| GET | `/api/customers` | Yes | List customers |
+| POST | `/api/images/upload` | Yes | Upload image to R2 |
 | GET | `/api/images/serve/*` | No | Serve image from R2 |
-| GET | `/api/reports/monthly` | JWT | Laporan bulanan |
-| **POST** | **`/api/webhook/incoming`** | **Fonnte** | **Webhook incoming** |
-| **POST** | **`/api/webhook/status`** | **Fonnte** | **Delivery status** |
-| GET | `/manifest.json` | No | PWA manifest |
-| GET | `/sw.js` | No | Service worker |
+| GET | `/api/wa/status` | No | Fonnte device status |
+| POST | `/api/wa/send-receipt` | Yes | Send WA receipt |
+| POST | `/api/wa/send-shipping` | Yes | Send shipping notif |
+| POST | `/api/wa/broadcast` | Yes | Broadcast to customers |
+| POST | `/api/wa/send-custom` | Yes | Send custom WA message |
+| GET | `/api/wa/history` | Yes | WA message history |
+| POST | `/api/webhook/incoming` | No | Fonnte webhook receiver |
+| GET | `/api/dashboard/stats` | Yes | Dashboard statistics |
+| GET | `/api/reports/*` | Yes | Report endpoints |
 
 ---
 
 ## Data Architecture
 
-### Database: Supabase PostgreSQL
-| Table | Description | Key Fields |
-|-------|-------------|------------|
-| `stores` | Store/toko data | id, name, slug, owner_phone, pin_code, tier |
-| `products` | Product catalog | id, store_id, name, price, cost_price, stock, sizes, colors |
-| `orders` | Sales orders | id, store_id, order_number, total_amount, payment_status (paid/dp/pending) |
-| `order_items` | Order line items | id, order_id, product_name, quantity, unit_price, size, color |
-| `customers` | Customer CRM | id, store_id, name, phone, total_orders, segment |
-| `wa_messages` | WA message log | id, store_id, phone, message_type, status |
-
-### Storage Services
-- **Supabase PostgreSQL** - All relational data with RLS
-- **Cloudflare R2** - Product images (when configured)
-- **Fonnte API** - WhatsApp gateway
-
----
-
-## Setup Fonnte Webhook
-
-1. Login ke https://md.fonnte.com
-2. Device > Edit Device
-3. Set field berikut:
-
-| Setting | Value |
-|---------|-------|
-| **Webhook** | `https://fashionkas.pages.dev/api/webhook/incoming` |
-| **Webhook Connect** | `https://fashionkas.pages.dev/api/webhook/incoming` |
-| **Webhook Message Status** | `https://fashionkas.pages.dev/api/webhook/status` |
-| **autoread** | ON |
-| **Response Source** | Autoreply |
-| **Personal** | ON |
-| **Group** | ON |
-
----
+- **Database**: Supabase PostgreSQL
+- **Tables**: stores, products, orders, order_items, customers, wa_messages
+- **Storage**: Cloudflare R2 (product images)
+- **WhatsApp**: Fonnte API (Free plan: text only, Super+: with images)
+- **Auth**: Custom JWT with SHA-256 PIN hashing
 
 ## Tech Stack
-- **Backend**: Hono v4 (TypeScript) on Cloudflare Workers
-- **Frontend**: TailwindCSS CDN + Font Awesome + Chart.js
-- **Database**: Supabase (PostgreSQL) with RLS
-- **WhatsApp**: Fonnte API (auto-reply + webhook + bulk send)
-- **Storage**: Cloudflare R2 (images)
+- **Backend**: Hono + TypeScript on Cloudflare Workers
+- **Frontend**: Tailwind CSS (CDN) + Vanilla JS (inline)
+- **Database**: Supabase (PostgreSQL + REST API)
+- **Storage**: Cloudflare R2
+- **WA API**: Fonnte.com
+- **Build**: Vite + @hono/vite-cloudflare-pages
 - **Deploy**: Cloudflare Pages
-- **PWA**: manifest.json + service worker + install prompt
-- **Design**: Dark glassmorphism, purple accent (#A855F7)
-- **Auth**: PIN-based (SHA-256 + salt) + JWT (HS256, 30-day)
 
----
+## Fonnte Setup Guide
+1. Daftar di https://fonnte.com
+2. Hubungkan nomor WA
+3. Device > Edit > Webhook: `https://fashionkas.pages.dev/api/webhook/incoming`
+4. Token sudah dikonfigurasi di wrangler.jsonc
+5. **Note**: Free plan = text only. Upgrade ke Super (Rp45rb/bln) untuk kirim gambar
 
-## Credentials (in wrangler.jsonc)
-- `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_ANON_KEY` - Supabase anon JWT
-- `SUPABASE_SERVICE_KEY` - Supabase service role JWT
-- `JWT_SECRET` - Custom JWT secret
-- `FONNTE_TOKEN` - Fonnte device token
-- `FONNTE_ACCOUNT_TOKEN` - Fonnte account token
-- `SCRAPERAPI_KEY` - ScraperAPI key
-
----
-
-## Completion Score
-
-| Module | Score | Notes |
-|--------|-------|-------|
-| Backend API | 100% | 30+ endpoints, all functional |
-| WhatsApp Bot | 100% | 15+ commands, webhook active |
-| Fonnte Integration | 95% | Connected, quota 985 (free plan blocks images) |
-| Frontend UI | 95% | 13 pages, dark glassmorphism |
-| Database | 100% | 6 tables, RLS, indexes |
-| Auth | 100% | PIN + JWT + onboarding |
-| AI Agents | 90% | Scout + Closer working |
-| **Onboarding** | **100%** | **4-step guided setup (NEW)** |
-| **PWA** | **100%** | **Installable + offline (NEW)** |
-| **DP/Lunas** | **100%** | **Full payment status flow (NEW)** |
-| Subscriptions | 0% | Not implemented |
-| Payment Gateway | 0% | Not implemented |
-| **Overall** | **~85%** | GTM-ready for pilot |
-
----
-
-## GTM Roadmap
-
-### Phase 1: Pilot Ready (DONE - v2.1)
-- [x] Fix order bug
-- [x] Onboarding flow
-- [x] PWA manifest + SW
-- [x] DP/Lunas payment status
-- [x] Deploy to production
-- [x] Push to GitHub
-
-### Phase 2: First 10 Users (1-2 weeks)
-- [ ] R2 image upload UI integration
-- [ ] WhatsApp OTP PIN reset
-- [ ] Stock +/- quick buttons on catalog
-- [ ] Per-store webhook config (multi-store)
-- [ ] Fonnte Super plan upgrade (images)
-- [ ] Referral invite link
-
-### Phase 3: Revenue (2-4 weeks)
-- [ ] Subscription tiers (Free/Basic Rp49K/Pro Rp99K)
-- [ ] Usage limits per tier
-- [ ] Midtrans/Xendit payment gateway
-- [ ] CSV/PDF export reports
-- [ ] Multi-admin support
-
-### Phase 4: Scale (1-2 months)
-- [ ] Advanced analytics
-- [ ] Automated marketing sequences
-- [ ] Shopee/Tokopedia integration
-- [ ] Multi-language support
-- [ ] Customer testimonial system
-
----
-
-## Deploy Commands
-```bash
-# Build
-npm run build
-
-# Deploy to Cloudflare Pages
-export CLOUDFLARE_API_TOKEN="your-token"
-npx wrangler pages deploy dist --project-name fashionkas
-
-# Local dev
-npm run build && pm2 start ecosystem.config.cjs
-```
-
----
-
-**v2.1** | 24 Maret 2026 | Built with GenSpark.AI
-**Sovereign Empire** | FashionKas Module
+## Deployment
+- **Platform**: Cloudflare Pages
+- **Status**: ACTIVE
+- **Version**: 2.2
+- **Last Deploy**: 24 Maret 2026
