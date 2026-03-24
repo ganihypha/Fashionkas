@@ -1,5 +1,5 @@
-// FashionKas Layout Component v2.1
-// Updated: PWA support, DP/Lunas status, onboarding
+// FashionKas Layout Component v2.3
+// Fixed: const store collision with page scripts causing 'Identifier already declared' error
 export function fashionLayout(title: string, content: string, activeNav?: string): string {
   return `<!DOCTYPE html>
 <html lang="id">
@@ -225,10 +225,12 @@ export function fashionLayout(title: string, content: string, activeNav?: string
       if (!getToken()) window.location.href = '/login';
     }
 
-    // Set avatar from store data
-    const store = getStore();
-    if (store.name && document.getElementById('userAvatar')) {
-      document.getElementById('userAvatar').textContent = store.name.substring(0, 2).toUpperCase();
+    // Set avatar from store data (wrapped in block to avoid const collision with page scripts)
+    {
+      const _layoutStore = getStore();
+      if (_layoutStore.name && document.getElementById('userAvatar')) {
+        document.getElementById('userAvatar').textContent = _layoutStore.name.substring(0, 2).toUpperCase();
+      }
     }
 
     // Register service worker for PWA

@@ -1,5 +1,5 @@
 // Onboarding Page - First-time user guided tour
-// FashionKas v2.1
+// FashionKas v2.3 - Fixed: apiFetch/getStore not defined (script execution order)
 import { fashionLayout } from '../layout'
 
 export function onboardingPage(): string {
@@ -214,87 +214,116 @@ export function onboardingPage(): string {
   </div>
 
   <script>
-    let currentObStep = 1;
+    // FashionKas Onboarding v2.2 - Fixed script execution order
+    // All code wrapped to avoid running before layout script defines getStore/apiFetch/showToast
+    // Using 'var' to avoid 'const' redeclaration conflicts with layout script
+    var currentObStep = 1;
 
     function goStep(step) {
       currentObStep = step;
       document.querySelectorAll('.onboard-step').forEach(el => el.classList.add('hidden'));
-      document.getElementById('obStep' + step).classList.remove('hidden');
-      document.getElementById('stepProgress').textContent = step + ' / 4';
-      document.getElementById('progressBar').style.width = (step * 25) + '%';
+      var stepEl = document.getElementById('obStep' + step);
+      if (stepEl) stepEl.classList.remove('hidden');
+      var progEl = document.getElementById('stepProgress');
+      if (progEl) progEl.textContent = step + ' / 4';
+      var barEl = document.getElementById('progressBar');
+      if (barEl) barEl.style.width = (step * 25) + '%';
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Save progress to localStorage
+      try { localStorage.setItem('fk_onboarding_step', step); } catch(e) {}
+      if (step === 4) {
+        try { localStorage.setItem('fk_onboarding_done', '1'); } catch(e) {}
+      }
     }
 
-    // Auto-fill catalog URL
-    const store = getStore();
-    const catalogUrl = window.location.origin + '/catalog/' + (store.slug || '');
-    const urlEl = document.getElementById('obCatalogUrl');
-    if (urlEl) urlEl.value = catalogUrl;
-
-    // Profit calculator
-    document.getElementById('obPrice')?.addEventListener('input', updateProfit);
-    document.getElementById('obCost')?.addEventListener('input', updateProfit);
     function updateProfit() {
-      const price = parseInt(document.getElementById('obPrice')?.value) || 0;
-      const cost = parseInt(document.getElementById('obCost')?.value) || 0;
-      const profitEl = document.getElementById('obProductProfit');
-      const valEl = document.getElementById('obProfitValue');
-      if (price > 0 && cost > 0) {
+      var price = parseInt(document.getElementById('obPrice')?.value) || 0;
+      var cost = parseInt(document.getElementById('obCost')?.value) || 0;
+      var profitEl = document.getElementById('obProductProfit');
+      var valEl = document.getElementById('obProfitValue');
+      if (price > 0 && cost > 0 && profitEl && valEl) {
         profitEl.classList.remove('hidden');
         valEl.textContent = '+Rp ' + (price - cost).toLocaleString('id-ID');
-      } else {
+      } else if (profitEl) {
         profitEl.classList.add('hidden');
       }
     }
 
     async function addFirstProduct() {
-      const name = document.getElementById('obProductName').value.trim();
-      const price = parseInt(document.getElementById('obPrice').value) || 0;
-      const cost = parseInt(document.getElementById('obCost').value) || 0;
-      const stock = parseInt(document.getElementById('obStock').value) || 10;
-      const category = document.getElementById('obCategory').value;
-      const errEl = document.getElementById('obAddError');
+      var name = document.getElementById('obProductName').value.trim();
+      var price = parseInt(document.getElementById('obPrice').value) || 0;
+      var cost = parseInt(document.getElementById('obCost').value) || 0;
+      var stock = parseInt(document.getElementById('obStock').value) || 10;
+      var category = document.getElementById('obCategory').value;
+      var errEl = document.getElementById('obAddError');
       
-      if (!name || !price) { errEl.textContent = 'Nama produk dan harga jual wajib diisi'; errEl.classList.remove('hidden'); return; }
+      if (!name || !price) {
+        if (errEl) { errEl.textContent = 'Nama produk dan harga jual wajib diisi'; errEl.classList.remove('hidden'); }
+        return;
+      }
       
-      const btn = document.getElementById('btnAddProduct');
-      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Menyimpan...';
-      errEl.classList.add('hidden');
+      var btn = document.getElementById('btnAddProduct');
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Menyimpan...'; }
+      if (errEl) errEl.classList.add('hidden');
       
       try {
+        if (typeof apiFetch !== 'function') throw new Error('Halaman belum siap, coba refresh browser');
         await apiFetch('/api/products', {
           method: 'POST',
           body: JSON.stringify({ name, price, cost_price: cost, stock, category })
         });
-        showToast('Produk pertama berhasil ditambahkan!');
+        if (typeof showToast === 'function') showToast('Produk pertama berhasil ditambahkan!');
         goStep(3);
       } catch(e) {
-        errEl.textContent = 'Gagal: ' + e.message;
-        errEl.classList.remove('hidden');
+        if (errEl) { errEl.textContent = 'Gagal: ' + e.message; errEl.classList.remove('hidden'); }
       }
-      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-plus mr-2"></i>Simpan & Lanjut';
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-plus mr-2"></i>Simpan & Lanjut'; }
     }
 
     function copyLink() {
-      const url = document.getElementById('obCatalogUrl').value;
+      var url = document.getElementById('obCatalogUrl')?.value || '';
+      if (!url) return;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(url);
-        showToast('Link katalog disalin!');
+        if (typeof showToast === 'function') showToast('Link katalog disalin!');
       } else {
         prompt('Copy link ini:', url);
       }
     }
 
     function shareWA() {
-      const store = getStore();
-      const url = document.getElementById('obCatalogUrl').value;
-      const msg = 'Hai! Yuk lihat koleksi terbaru kami:\\n\\n*' + (store.name || 'Fashion Store') + '*\\n' + url + '\\n\\nPesan langsung via WhatsApp!';
+      var obStore = (typeof getStore === 'function') ? getStore() : {};
+      var url = document.getElementById('obCatalogUrl')?.value || '';
+      var msg = 'Hai! Yuk lihat koleksi terbaru kami:\\n\\n*' + (obStore.name || 'Fashion Store') + '*\\n' + url + '\\n\\nPesan langsung via WhatsApp!';
       window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
     }
 
-    // Mark onboarding as complete when reaching step 4
-    const origGoStep = goStep;
-    // Will track via localStorage
+    // === DEFERRED INITIALIZATION ===
+    // This code MUST run after the layout script has loaded (which defines getStore, apiFetch, etc.)
+    // Using setTimeout(0) to defer execution to the next event loop tick, after all sync scripts finish
+    setTimeout(function() {
+      // Auto-fill catalog URL from store data
+      try {
+        var obStore = (typeof getStore === 'function') ? getStore() : {};
+        var catalogUrl = window.location.origin + '/catalog/' + (obStore.slug || '');
+        var urlEl = document.getElementById('obCatalogUrl');
+        if (urlEl) urlEl.value = catalogUrl;
+      } catch(e) {
+        console.warn('[Onboarding] Could not load store data:', e.message);
+      }
+
+      // Attach profit calculator listeners
+      var priceEl = document.getElementById('obPrice');
+      var costEl = document.getElementById('obCost');
+      if (priceEl) priceEl.addEventListener('input', updateProfit);
+      if (costEl) costEl.addEventListener('input', updateProfit);
+
+      // Restore last step if returning
+      try {
+        var savedStep = localStorage.getItem('fk_onboarding_step');
+        if (savedStep && parseInt(savedStep) > 1) goStep(parseInt(savedStep));
+      } catch(e) {}
+    }, 0);
   </script>`
   
   return fashionLayout('Selamat Datang', content, 'dashboard')
