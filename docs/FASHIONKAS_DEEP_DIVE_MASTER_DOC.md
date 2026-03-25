@@ -278,12 +278,12 @@ Reseller fashion Indonesia (jutaan orang) yang jualan lewat WhatsApp menghadapi:
 
 ## 5. USER ARCHETYPES & PERSONA RESEARCH
 
-### 5.1 Primary Persona: NURUL
+### 5.1 Primary Persona: RESELLER FASHION WA
 
 | Attribute | Detail |
 |-----------|--------|
-| **Nama** | Nurul Annisa |
-| **Usia** | 28 Tahun |
+| **Nama** | Persona Generik (Reseller Fashion) |
+| **Usia** | 22-35 Tahun |
 | **Profil** | Reseller Rumahan (Gamis, Hijab, Daster) |
 | **Lokasi** | Kota kecil/kabupaten, jualan dari rumah |
 | **Volume** | 20-50 SKU, 5-20 order/hari |
@@ -294,7 +294,7 @@ Reseller fashion Indonesia (jutaan orang) yang jualan lewat WhatsApp menghadapi:
 | **Goal** | Jualan lebih rapi tanpa tambah ribet |
 | **Trust Pattern** | Percaya kalau ada rekomendasi teman, screenshot, gratis dulu |
 
-> *"Aku takut buka link yang nggak kenal. Takut penipuan. Semua transaksi harus di WA aja biar aman."* — Nurul
+> *"Aku takut buka link yang nggak kenal. Takut penipuan. Semua transaksi harus di WA aja biar aman."* — Reseller tipikal
 
 ### 5.2 Extended Personas
 
@@ -457,7 +457,7 @@ a26fa54 v2.0 - Fonnte Webhook Bot + Auto-Reply + CLI Commands
 107ddeb v1.2.1 - FULL Fonnte API Deep Integration
 d06ece0 v1.2.0 - AI Agents + WA Automation + Reports
 739b6f3 v1.1.0 - Major Enhancement
-8d411ab v1.0 - Complete POS system for Nurul Annisa
+8d411ab v1.0 - Complete POS system for fashion resellers
 ```
 
 ---

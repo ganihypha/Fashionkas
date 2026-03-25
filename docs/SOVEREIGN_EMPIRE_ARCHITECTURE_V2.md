@@ -153,7 +153,7 @@ export default app
 ### 4.2 Public Catalog Flow
 
 ```
-[Customer opens /catalog/nurul-fashion]
+[Customer opens /catalog/zahra-hijab]
          │
          ▼
 [GET /catalog/:slug]

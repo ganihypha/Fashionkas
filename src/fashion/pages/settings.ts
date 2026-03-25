@@ -148,53 +148,33 @@ export function settingsPage(): string {
       </div>
       
       <div class="space-y-3">
-        <!-- Free/Beta Tier -->
+        <!-- Free/Beta Tier - ACTIVE -->
         <div class="glass-card rounded-xl p-4 border border-green-500/20 relative overflow-hidden">
           <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-xl bg-green-500/20 text-green-400 text-[9px] font-bold">AKTIF</div>
           <h3 class="font-heading font-bold text-sm text-green-400 mb-2">Beta Gratis</h3>
           <p class="text-2xl font-heading font-bold mb-1">Rp 0<span class="text-xs text-gray-500 font-normal">/bln</span></p>
           <div class="space-y-1 mt-3">
             <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Unlimited produk & pesanan</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Katalog online</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Katalog online + link share</div>
             <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>WA Auto-reply bot</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Dashboard & laporan</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-400"><i class="fa-solid fa-xmark text-gray-600 text-[9px]"></i>Kirim gambar via WA</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-400"><i class="fa-solid fa-xmark text-gray-600 text-[9px]"></i>Custom domain katalog</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Dashboard omzet & laporan</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Kasir digital + track stok</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-green-400 text-[9px]"></i>Upload gambar produk</div>
           </div>
+          <p class="text-[10px] text-gray-500 mt-3 italic">Semua fitur terbuka selama beta. Nikmati tanpa batas!</p>
         </div>
         
-        <!-- Pro Tier -->
-        <div class="glass-card rounded-xl p-4 border border-fk-purple/20 relative overflow-hidden">
-          <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-xl bg-fk-purple/20 text-fk-purple text-[9px] font-bold">SEGERA</div>
-          <h3 class="font-heading font-bold text-sm text-fk-purple mb-2">Pro</h3>
-          <p class="text-2xl font-heading font-bold mb-1">Rp 49.000<span class="text-xs text-gray-500 font-normal">/bln</span></p>
-          <div class="space-y-1 mt-3">
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Semua fitur Beta</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Upload gambar R2 unlimited</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Kirim gambar via WA (Super plan)</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>AI Scout & Closer agents</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-fk-purple text-[9px]"></i>Priority support</div>
+        <!-- Future Plans Teaser -->
+        <div class="glass-card rounded-xl p-4 border border-white/5">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-fk-purple/10 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-wand-magic-sparkles text-fk-purple text-sm"></i>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-gray-300">Fitur premium segera hadir</p>
+              <p class="text-[10px] text-gray-500">Kirim gambar via WA, AI agent, custom domain, dan lainnya.</p>
+            </div>
           </div>
-          <button onclick="showToast('Segera hadir! Semua fitur masih gratis selama beta 🎉', 'info')" class="w-full mt-4 py-2.5 rounded-xl bg-fk-purple/10 text-fk-purple border border-fk-purple/20 text-xs font-bold hover:bg-fk-purple/20 transition-all">
-            <i class="fa-solid fa-bell mr-1"></i>Notify Saat Tersedia
-          </button>
-        </div>
-        
-        <!-- Enterprise Tier -->
-        <div class="glass-card rounded-xl p-4 border border-amber-500/20 relative overflow-hidden">
-          <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-xl bg-amber-500/20 text-amber-400 text-[9px] font-bold">SEGERA</div>
-          <h3 class="font-heading font-bold text-sm text-amber-400 mb-2">Enterprise</h3>
-          <p class="text-2xl font-heading font-bold mb-1">Rp 149.000<span class="text-xs text-gray-500 font-normal">/bln</span></p>
-          <div class="space-y-1 mt-3">
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>Semua fitur Pro</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>Custom domain</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>Multi-store management</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>WhatsApp multi-device</div>
-            <div class="flex items-center gap-2 text-[11px] text-gray-300"><i class="fa-solid fa-check text-amber-400 text-[9px]"></i>API access & webhook custom</div>
-          </div>
-          <button onclick="showToast('Segera hadir! Hubungi kami via WA untuk early access 🎉', 'info')" class="w-full mt-4 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold hover:bg-amber-500/20 transition-all">
-            <i class="fa-solid fa-bell mr-1"></i>Notify Saat Tersedia
-          </button>
         </div>
       </div>
     </div>
@@ -231,17 +211,17 @@ export function settingsPage(): string {
     <div class="glass-card rounded-xl p-5 fk-border">
       <h2 class="font-heading font-bold text-sm mb-4"><i class="fa-solid fa-link mr-2 text-fk-purple"></i>Link Penting</h2>
       <div class="space-y-2">
-        <a href="https://www.instagram.com/nurulannisaff" target="_blank" class="flex items-center justify-between py-2.5 hover:bg-white/5 px-3 rounded-xl transition">
+        <a href="https://www.instagram.com/fashionkas.id" target="_blank" class="flex items-center justify-between py-2.5 hover:bg-white/5 px-3 rounded-xl transition">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"><i class="fa-brands fa-instagram text-white text-sm"></i></div>
-            <div><p class="text-sm font-medium">Nurul Annisa</p><p class="text-[10px] text-gray-500">@nurulannisaff</p></div>
+            <div><p class="text-sm font-medium">FashionKas</p><p class="text-[10px] text-gray-500">@fashionkas.id</p></div>
           </div>
           <i class="fa-solid fa-arrow-up-right-from-square text-gray-600 text-xs"></i>
         </a>
         <a href="https://github.com/ganihypha" target="_blank" class="flex items-center justify-between py-2.5 hover:bg-white/5 px-3 rounded-xl transition">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center"><i class="fa-brands fa-github text-white text-sm"></i></div>
-            <div><p class="text-sm font-medium">Sovereign Empire</p><p class="text-[10px] text-gray-500">github.com/ganihypha</p></div>
+            <div><p class="text-sm font-medium">FashionKas</p><p class="text-[10px] text-gray-500">github.com/ganihypha</p></div>
           </div>
           <i class="fa-solid fa-arrow-up-right-from-square text-gray-600 text-xs"></i>
         </a>

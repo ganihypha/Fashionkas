@@ -219,7 +219,7 @@ export function registerPage(): string {
         <h3 class="font-['Montserrat'] font-bold text-sm text-fk-purple mb-1"><i class="fa-solid fa-store mr-2"></i>Info Toko</h3>
         <div>
           <label class="text-xs text-gray-400 font-medium block mb-1.5">Nama Toko *</label>
-          <input type="text" id="storeName" placeholder="contoh: Nurul Fashion" 
+          <input type="text" id="storeName" placeholder="contoh: Zahra Hijab Store" 
             class="w-full px-4 py-3 rounded-xl bg-empire-dark border border-white/10 text-sm transition-all">
         </div>
         <div>
@@ -248,7 +248,7 @@ export function registerPage(): string {
         <h3 class="font-['Montserrat'] font-bold text-sm text-fk-purple mb-1"><i class="fa-solid fa-user mr-2"></i>Info Pemilik</h3>
         <div>
           <label class="text-xs text-gray-400 font-medium block mb-1.5">Nama Lengkap *</label>
-          <input type="text" id="ownerName" placeholder="contoh: Nurul Annisa" 
+          <input type="text" id="ownerName" placeholder="contoh: Siti Rahayu" 
             class="w-full px-4 py-3 rounded-xl bg-empire-dark border border-white/10 text-sm transition-all">
         </div>
         <div>

@@ -72,7 +72,7 @@ export function landingPage(): string {
       <p class="text-sm text-gray-500 mb-8 max-w-xl mx-auto">Upload foto + harga, share 1 link ke semua customer via WhatsApp. Buat katalog profesional dalam 5 menit!</p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <a href="/register" class="px-8 py-4 rounded-xl fk-gradient text-white font-['Montserrat'] font-bold text-sm shadow-lg shadow-fk-purple/30 hover:shadow-fk-purple/50 transition-all">
-          <i class="fa-solid fa-rocket mr-2"></i>Coba Gratis 14 Hari
+          <i class="fa-solid fa-rocket mr-2"></i>Daftar Gratis Sekarang
         </a>
         <a href="#demo" class="px-8 py-4 rounded-xl bg-white/5 text-white border border-white/10 font-medium text-sm hover:bg-white/10 transition-all">
           <i class="fa-solid fa-play mr-2"></i>Lihat Demo Katalog
@@ -121,7 +121,7 @@ export function landingPage(): string {
       <div class="glass-card rounded-2xl p-4 sm:p-6 max-w-lg mx-auto fk-glow">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-xl fk-gradient flex items-center justify-center"><i class="fa-solid fa-shirt text-white"></i></div>
-          <div><h3 class="font-bold text-sm">Nurul Fashion</h3><p class="text-[10px] text-gray-500">Gamis, Hijab & Fashion Muslim</p></div>
+          <div><h3 class="font-bold text-sm">Zahra Hijab Store</h3><p class="text-[10px] text-gray-500">Gamis, Hijab & Fashion Muslim</p></div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div class="glass-card rounded-xl p-3 border border-white/5">
@@ -190,69 +190,32 @@ export function landingPage(): string {
     </div>
   </section>
 
-  <!-- Pricing Section -->
+  <!-- Pricing Section - Beta Gratis -->
   <section class="py-16 px-4 border-t border-white/5">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="font-['Montserrat'] font-bold text-2xl text-center mb-3">Harga <span class="text-fk-purple">Terjangkau</span></h2>
-      <p class="text-center text-gray-500 text-sm mb-10">Paling murah dibanding kompetitor</p>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-        <!-- Starter -->
-        <div class="glass-card rounded-2xl p-6 border border-white/5">
-          <h3 class="font-bold text-sm text-gray-400 mb-1">Starter</h3>
-          <div class="flex items-baseline gap-1 mb-4">
-            <span class="font-['Montserrat'] font-black text-3xl">Rp 0</span>
-            <span class="text-xs text-gray-600">/bulan</span>
-          </div>
-          <ul class="space-y-2 text-xs text-gray-400 mb-6">
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>50 produk</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>100 transaksi/bulan</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>1 link katalog</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Dashboard dasar</li>
-            <li class="text-gray-600"><i class="fa-solid fa-xmark text-gray-700 mr-2"></i>WA automation</li>
-          </ul>
-          <a href="/register" class="block text-center py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm hover:bg-white/10 transition">Mulai Gratis</a>
-        </div>
-        <!-- Basic (Popular) -->
-        <div class="glass-card rounded-2xl p-6 border-2 border-fk-purple/30 fk-glow relative">
-          <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full fk-gradient text-[10px] font-bold text-white">POPULER</div>
-          <h3 class="font-bold text-sm text-fk-purple mb-1">Basic</h3>
-          <div class="flex items-baseline gap-1 mb-4">
-            <span class="font-['Montserrat'] font-black text-3xl text-fk-purple">Rp 99K</span>
-            <span class="text-xs text-gray-600">/bulan</span>
-          </div>
-          <ul class="space-y-2 text-xs text-gray-300 mb-6">
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Produk unlimited</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Transaksi unlimited</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>1 link katalog</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>500 WA/bulan</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Dashboard lengkap</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Auto WA konfirmasi</li>
-          </ul>
-          <a href="/register" class="block text-center py-2.5 rounded-xl fk-gradient text-white text-sm font-bold shadow-lg shadow-fk-purple/20">14 Hari Gratis</a>
-        </div>
-        <!-- Pro -->
-        <div class="glass-card rounded-2xl p-6 border border-white/5">
-          <h3 class="font-bold text-sm text-amber-400 mb-1">Pro</h3>
-          <div class="flex items-baseline gap-1 mb-4">
-            <span class="font-['Montserrat'] font-black text-3xl">Rp 149K</span>
-            <span class="text-xs text-gray-600">/bulan</span>
-          </div>
-          <ul class="space-y-2 text-xs text-gray-400 mb-6">
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Semua fitur Basic</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Multi-katalog</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>WA unlimited</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Full analytics</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Export CSV/PDF</li>
-            <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Priority support</li>
-          </ul>
-          <a href="/register" class="block text-center py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm hover:bg-white/10 transition">Mulai Pro</a>
-        </div>
-      </div>
-      <div class="text-center mt-6">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="font-['Montserrat'] font-bold text-2xl mb-3">Sekarang <span class="text-fk-purple">Gratis</span></h2>
+      <p class="text-gray-500 text-sm mb-8">Semua fitur terbuka selama masa beta. Tanpa batas.</p>
+      <div class="glass-card rounded-2xl p-8 max-w-md mx-auto border-2 border-fk-purple/30 fk-glow">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 mb-4">
           <i class="fa-solid fa-gift text-green-400"></i>
-          <span class="text-xs text-green-400 font-medium">BETA: Semua fitur Pro GRATIS untuk early adopters!</span>
+          <span class="text-xs text-green-400 font-bold">BETA GRATIS</span>
         </div>
+        <div class="flex items-baseline gap-1 justify-center mb-4">
+          <span class="font-['Montserrat'] font-black text-4xl text-fk-purple">Rp 0</span>
+          <span class="text-xs text-gray-600">/bulan</span>
+        </div>
+        <ul class="space-y-2.5 text-sm text-gray-300 mb-6 text-left max-w-xs mx-auto">
+          <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Produk unlimited</li>
+          <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Transaksi unlimited</li>
+          <li><i class="fa-solid fa-check text-green-400 mr-2"></i>1 link katalog digital</li>
+          <li><i class="fa-solid fa-check text-green-400 mr-2"></i>WA struk otomatis</li>
+          <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Dashboard omzet & profit</li>
+          <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Auto-reply bot WA</li>
+        </ul>
+        <a href="/register" class="block text-center py-3.5 rounded-xl fk-gradient text-white font-['Montserrat'] font-bold text-sm shadow-lg shadow-fk-purple/20 hover:opacity-90 transition">
+          <i class="fa-solid fa-rocket mr-2"></i>Daftar Gratis Sekarang
+        </a>
+        <p class="text-[10px] text-gray-600 mt-3">Tanpa kartu kredit. Tanpa batas waktu. Langsung pakai.</p>
       </div>
     </div>
   </section>
@@ -263,8 +226,8 @@ export function landingPage(): string {
       <h2 class="font-['Montserrat'] font-bold text-xl text-center mb-8">Kenapa <span class="text-fk-purple">FashionKas</span>?</h2>
       <div class="grid grid-cols-2 gap-3 text-center">
         <div class="glass-card rounded-xl p-4 border border-fk-purple/20">
-          <div class="font-['Montserrat'] font-black text-2xl text-fk-purple">Rp 99K</div>
-          <div class="text-xs text-gray-500 mb-2">FashionKas</div>
+          <div class="font-['Montserrat'] font-black text-2xl text-green-400">GRATIS</div>
+          <div class="text-xs text-gray-500 mb-2">FashionKas Beta</div>
           <div class="text-[10px] text-gray-600">Katalog + Kasir + WA</div>
         </div>
         <div class="glass-card rounded-xl p-4 border border-red-500/20">
@@ -295,11 +258,11 @@ export function landingPage(): string {
         <div class="flex items-center gap-2">
           <div class="w-7 h-7 rounded-lg fk-gradient flex items-center justify-center"><i class="fa-solid fa-shirt text-white text-xs"></i></div>
           <span class="font-['Montserrat'] font-bold text-xs"><span class="text-fk-purple">Fashion</span>Kas</span>
-          <span class="text-[10px] text-gray-600">by Sovereign Empire</span>
+          <span class="text-[10px] text-gray-600">v2.5</span>
         </div>
         <div class="flex gap-4 text-xs text-gray-600">
           <a href="https://github.com/ganihypha" target="_blank" class="hover:text-white"><i class="fa-brands fa-github mr-1"></i>GitHub</a>
-          <a href="https://www.instagram.com/nurulannisaff" target="_blank" class="hover:text-white"><i class="fa-brands fa-instagram mr-1"></i>Nurul Annisa</a>
+          <a href="https://www.instagram.com/fashionkas.id" target="_blank" class="hover:text-white"><i class="fa-brands fa-instagram mr-1"></i>FashionKas</a>
         </div>
       </div>
       <p class="text-center text-[10px] text-gray-700 mt-4">Built with GenSpark.AI | Hono + Cloudflare Workers + Supabase</p>

@@ -114,7 +114,7 @@
 │  3. Catat Transaksi      │
 ├──────────────────────────┤
 │  DEMO KATALOG            │
-│  (Preview katalog Nurul) │
+│  (Preview katalog contoh)│
 ├──────────────────────────┤
 │  6 FITUR UNGGULAN        │
 │  Grid 2x3 feature cards  │

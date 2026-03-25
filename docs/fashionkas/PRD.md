@@ -46,11 +46,11 @@ Reseller fashion Indonesia (jutaan orang) yang jualan lewat WhatsApp: hijab, gam
 
 ## 3. TARGET USER
 
-### Primary Persona: NURUL
+### Primary Persona: RESELLER FASHION WA
 
 | Atribut | Detail |
 |---------|--------|
-| **Nama** | Nurul Annisa (representatif) |
+| **Nama** | Persona Generik (Reseller Fashion) |
 | **Usia** | 22-35 Tahun |
 | **Profil** | Reseller rumahan (Gamis, Hijab, Daster) |
 | **Lokasi** | Kota kecil/kabupaten, jualan dari rumah |
