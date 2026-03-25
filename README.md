@@ -1,13 +1,22 @@
-# FashionKas v2.2
+# FashionKas v2.5
 ## Katalog + Kasir Digital + WhatsApp Bot + R2 Upload + Subscription Tiers untuk Fashion Reseller Indonesia
 
 **Production**: https://fashionkas.pages.dev
 **GitHub**: https://github.com/ganihypha/Fashionkas
 **Webhook URL**: https://fashionkas.pages.dev/api/webhook/incoming
+**Deep Dive Doc**: [docs/FASHIONKAS_DEEP_DIVE_MASTER_DOC.md](docs/FASHIONKAS_DEEP_DIVE_MASTER_DOC.md)
 
 ---
 
-## Completed Features (v2.2)
+## Completed Features (v2.5)
+
+### New in v2.5
+- **Critical Bug Fix: Script Loading** — Fixed `apiFetch is not defined` error that broke ALL pages (catalog, sale, orders). Root cause: helper functions in layout body were loading AFTER page scripts. Fix: moved all core helpers to `<head>`.
+- **Critical Bug Fix: Syntax Error** — Fixed `Unexpected identifier 'w'` in catalog-manage.ts and kasir.ts caused by deeply nested escaped quotes in `onerror` attributes. Fix: replaced with `imgFallback()` function.
+- **Service Worker v2.5** — Fixed stale cache issue where SW v2.1 was serving outdated HTML. New SW uses network-only for HTML, cache for assets.
+- **Zero JS Errors** — All 8 pages verified with 0 JavaScript syntax/runtime errors
+
+### Previous v2.2
 
 ### New in v2.2
 - **R2 Image Upload UI** - Drag-drop + camera capture untuk upload foto produk langsung ke Cloudflare R2
@@ -147,8 +156,21 @@
 4. Token sudah dikonfigurasi di wrangler.jsonc
 5. **Note**: Free plan = text only. Upgrade ke Super (Rp45rb/bln) untuk kirim gambar
 
+## Deep Dive Documentation
+- **[Full Deep Dive & Research Master Document](docs/FASHIONKAS_DEEP_DIVE_MASTER_DOC.md)** — Comprehensive analysis covering:
+  - Current state & feature inventory (7,851 lines of code, 52 modules)
+  - Brand architecture (FashionKas by Sovereign)
+  - Problem definition & market opportunity
+  - User archetypes (5 personas researched)
+  - Monetization & 4-layer revenue model
+  - 30-day GTM roadmap with KPIs
+  - 90-day execution roadmap (3 phases)
+  - PMF scorecard (6.2/10)
+  - Risk analysis & mitigation
+  - Full implementation backlog (P0-P3)
+
 ## Deployment
 - **Platform**: Cloudflare Pages
 - **Status**: ACTIVE
-- **Version**: 2.2
-- **Last Deploy**: 24 Maret 2026
+- **Version**: 2.5
+- **Last Deploy**: 25 Maret 2026
