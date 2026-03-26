@@ -1,8 +1,6 @@
-// FashionKas Layout Component v2.4
-// CRITICAL FIX: Core JS functions (apiFetch, getStore, showToast, etc.) moved to <head>
-// so they are available BEFORE any page content <script> blocks execute.
-// Previous bug: content scripts in <main> ran before layout script at bottom of <body>,
-// causing "apiFetch is not defined" on ALL pages (dashboard, catalog, onboarding, etc.)
+// FashionKas Layout Component v3.0
+// DESIGN UPGRADE: Skeleton loading, smooth transitions, micro-interactions, better UX
+// Core JS functions in <head> so all page scripts can use them.
 
 export function fashionLayout(title: string, content: string, activeNav?: string): string {
   return `<!DOCTYPE html>
@@ -101,38 +99,88 @@ export function fashionLayout(title: string, content: string, activeNav?: string
   </script>
 
   <style>
-    body { font-family: 'Inter', sans-serif; background: #0A0A0A; color: #FFFFFF; }
-    .glass-card { background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0A0A0A; color: #FFFFFF; }
+    
+    /* Glass Cards */
+    .glass-card { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); }
     .fk-glow { box-shadow: 0 0 30px rgba(168, 85, 247, 0.15); }
     .fk-border { border: 1px solid rgba(168, 85, 247, 0.2); }
     .fk-gradient { background: linear-gradient(135deg, #A855F7, #7C3AED); }
-    .card-hover { transition: all 0.3s ease; }
-    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
-    .wa-btn { background: #25D366; }
+    
+    /* Card Hover with micro-interaction */
+    .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); border-color: rgba(168,85,247,0.15); }
+    
+    /* Button micro-interactions */
+    button, a[role="button"], .btn-interact { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    button:active, a[role="button"]:active, .btn-interact:active { transform: scale(0.97); }
+    
+    /* WhatsApp button */
+    .wa-btn { background: #25D366; transition: all 0.2s; }
     .wa-btn:hover { background: #1da851; }
     .wa-pulse { animation: waPulse 2s infinite; }
     @keyframes waPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.4); } 50% { box-shadow: 0 0 0 8px rgba(37,211,102,0); } }
+    
+    /* AI Glow */
     .ai-glow { animation: aiGlow 3s infinite; }
     @keyframes aiGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.3); } 50% { box-shadow: 0 0 0 6px rgba(168,85,247,0); } }
+    
+    /* Status badges */
     .status-pending { background: rgba(245,158,11,0.15); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
     .status-processing { background: rgba(59,130,246,0.15); color: #3B82F6; border: 1px solid rgba(59,130,246,0.3); }
     .status-shipped { background: rgba(6,182,212,0.15); color: #06B6D4; border: 1px solid rgba(6,182,212,0.3); }
     .status-delivered { background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); }
     .status-cancelled { background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); }
+    
+    /* Skeleton Loading */
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: skeletonShimmer 1.5s ease-in-out infinite; border-radius: 8px; }
+    @keyframes skeletonShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-text { height: 14px; margin-bottom: 8px; }
+    .skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
+    .skeleton-card { height: 100px; margin-bottom: 12px; }
+    .skeleton-circle { border-radius: 50%; }
+    
+    /* Page fade-in transition */
+    main { animation: pageFadeIn 0.3s ease-out; }
+    @keyframes pageFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Empty state styling */
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+    .empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #9CA3AF; }
+    .empty-state p { font-size: 13px; color: #6B7280; margin-bottom: 20px; }
+    
+    /* Scrollbar */
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 100; padding: 12px 24px; border-radius: 12px; font-size: 13px; transition: all 0.3s; }
-    .toast.success { background: rgba(16,185,129,0.9); color: white; }
-    .toast.error { background: rgba(239,68,68,0.9); color: white; }
-    .toast.info { background: rgba(59,130,246,0.9); color: white; }
-    .more-menu { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px; background: rgba(26,26,46,0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 8px; min-width: 200px; z-index: 70; box-shadow: 0 -8px 32px rgba(0,0,0,0.5); }
-    .more-menu.show { display: block; animation: slideUp 0.2s ease; }
+    
+    /* Toast notifications - improved */
+    #toastContainer { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+    .toast { padding: 12px 24px; border-radius: 12px; font-size: 13px; font-weight: 500; animation: toastIn 0.3s ease-out, toastOut 0.3s 2.7s ease-in forwards; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    .toast.success { background: rgba(16,185,129,0.95); color: white; }
+    .toast.error { background: rgba(239,68,68,0.95); color: white; }
+    .toast.info { background: rgba(59,130,246,0.95); color: white; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
+    
+    /* More menu popup */
+    .more-menu { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px; background: rgba(13,17,23,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 8px; min-width: 200px; z-index: 70; box-shadow: 0 -8px 32px rgba(0,0,0,0.5); }
+    .more-menu.show { display: block; animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
     @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     .more-menu a { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; transition: all 0.15s; }
     .more-menu a:hover { background: rgba(168,85,247,0.1); }
+    
+    /* Desktop nav */
     .desktop-nav a { position: relative; padding: 6px 12px; border-radius: 8px; font-size: 12px; transition: all 0.2s; }
     .desktop-nav a:hover { background: rgba(168,85,247,0.1); }
     .desktop-nav a.active { background: rgba(168,85,247,0.15); color: #A855F7; }
+    
+    /* Smooth scrolling */
+    html { scroll-behavior: smooth; }
+    
+    /* Input focus glow */
+    input:focus, select:focus, textarea:focus { outline: none; border-color: rgba(168,85,247,0.5) !important; box-shadow: 0 0 0 3px rgba(168,85,247,0.1) !important; }
   </style>
 </head>
 <body class="min-h-screen pb-20 md:pb-0">

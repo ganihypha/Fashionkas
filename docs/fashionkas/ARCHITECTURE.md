@@ -1,268 +1,154 @@
 # FASHIONKAS — ARCHITECTURE DOCUMENT
 ## Layer 1: Technical Architecture for Fashion Reseller Platform
-**Version**: 3.0 | **Date**: 25 Maret 2026 | **Status**: LIVE
+**Version**: 3.1 | **Date**: 26 Maret 2026 | **Status**: LIVE
 
 ---
 
 ## 1. SYSTEM OVERVIEW
 
 ```
-╔══════════════════════════════════════════════════════════════╗
-║                    INTERNET / USERS                         ║
-║  (Reseller fashion buka HP → ketik fashionkas.pages.dev)    ║
-╠══════════════════════════════════════════════════════════════╣
-║                                                              ║
-║  fashionkas.pages.dev (Cloudflare Pages - Edge)             ║
-║  ┌────────────────────────────────────────────────────┐     ║
-║  │   Hono v4 + TypeScript (_worker.js ~376KB)         │     ║
-║  │                                                     │     ║
-║  │   ┌─────────────┐   ┌──────────────────────────┐  │     ║
-║  │   │  API Routes  │   │  Page Routes (SSR HTML)   │  │     ║
-║  │   │  /api/*      │   │  / (landing)              │  │     ║
-║  │   │  30+ endpoints│  │  /fashionkas/* (app)      │  │     ║
-║  │   │              │   │  /catalog/:slug (public)  │  │     ║
-║  │   └──────┬───────┘   └──────────────────────────┘  │     ║
-║  └──────────┼──────────────────────────────────────────┘     ║
-║             │                                                ║
-║  ┌──────────▼──────────────────────────────────────────┐    ║
-║  │              EXTERNAL SERVICES                       │    ║
-║  │                                                      │    ║
-║  │  ┌──────────┐ ┌────────┐ ┌──────┐ ┌──────────┐    │    ║
-║  │  │ Supabase │ │ Fonnte │ │  R2  │ │ScraperAPI│    │    ║
-║  │  │ Postgres │ │ WA API │ │Bucket│ │  Search  │    │    ║
-║  │  │ REST API │ │        │ │Images│ │  (AI)    │    │    ║
-║  │  └──────────┘ └────────┘ └──────┘ └──────────┘    │    ║
-║  └──────────────────────────────────────────────────────┘    ║
-╚══════════════════════════════════════════════════════════════╝
+INTERNET / USERS (HP Android, browser Chrome)
+         │
+         ▼
+fashionkas.pages.dev (Cloudflare Pages Edge)
+┌─────────────────────────────────────────┐
+│  Hono v4 + TypeScript (_worker.js 404KB)│
+│  ┌──────────────┐  ┌─────────────────┐ │
+│  │  API Routes   │  │ Page Routes SSR │ │
+│  │  /api/* (30+) │  │ / + /fashionkas │ │
+│  │  REST + JSON  │  │ /catalog/:slug  │ │
+│  └──────┬────────┘  └─────────────────┘ │
+└─────────┼───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│  EXTERNAL SERVICES                       │
+│  ┌──────────┐ ┌────────┐ ┌──────┐      │
+│  │ Supabase │ │ Fonnte │ │  R2  │      │
+│  │ Postgres │ │ WA API │ │Bucket│      │
+│  │  6 tables│ │  Bot   │ │Images│      │
+│  └──────────┘ └────────┘ └──────┘      │
+└──────────────────────────────────────────┘
 ```
 
 ---
 
-## 2. APPLICATION ARCHITECTURE
+## 2. ROUTE STRUCTURE
 
-### 2.1 Entry Point
+### API Routes (10 groups, 30+ endpoints):
 ```
-src/index.tsx
-├── Imports (22 modules)
-├── Type definitions (Bindings)
-├── CORS middleware (/api/*)
-├── PWA files (manifest.json, sw.js)
-├── API Routes (10 route groups)
-├── Page Routes (13 pages)
-└── Export default app
-```
-
-### 2.2 Route Structure
-```
-API Routes:
-  /api/auth/*        → authRoutes        (register, login, me, store, change-pin)
-  /api/products/*    → productRoutes     (CRUD, public catalog)
-  /api/orders/*      → orderRoutes       (CRUD, status update)
-  /api/customers/*   → customerRoutes    (list)
-  /api/dashboard/*   → dashboardRoutes   (stats, chart)
-  /api/wa/*          → waRoutes          (send, broadcast, status, history)
-  /api/reports/*     → reportRoutes      (daily, weekly, monthly)
-  /api/images/*      → imageRoutes       (upload R2, serve)
-  /api/ai/*          → aiRoutes          (scout, closer)
-  /api/webhook/*     → webhookRoutes     (Fonnte incoming, auto-reply bot)
-
-Page Routes:
-  /                         → landingPage()
-  /login                    → loginPage()
-  /register                 → registerPage()
-  /fashionkas/dashboard     → dashboardPage()
-  /fashionkas/sale          → kasirPage()
-  /fashionkas/catalog       → catalogManagePage()
-  /fashionkas/orders        → ordersPage()
-  /fashionkas/settings      → settingsPage()
-  /fashionkas/wa            → waAutomationPage()
-  /fashionkas/reports       → reportsPage()
-  /fashionkas/scout         → scoutAgentPage()
-  /fashionkas/closer        → closerAgentPage()
-  /fashionkas/onboarding    → onboardingPage()
-  /catalog/:slug            → catalogPublicPage(slug)
+/api/auth/*       → register, login, me, store, change-pin
+/api/products/*   → CRUD, public catalog
+/api/orders/*     → CRUD, status update
+/api/customers/*  → list, auto-create
+/api/dashboard/*  → stats, chart data
+/api/wa/*         → send receipt, broadcast, status, history
+/api/reports/*    → daily, weekly, monthly
+/api/images/*     → R2 upload, serve
+/api/ai/*         → scout, closer (50% done)
+/api/webhook/*    → Fontte incoming, auto-reply bot
+/api/health       → status check
 ```
 
-### 2.3 Module Structure
+### Page Routes (13 pages + public catalog):
+```
+/                         → landingPage() v3.0
+/login                    → loginPage()
+/register                 → registerPage()
+/fashionkas/dashboard     → dashboardPage()
+/fashionkas/sale          → kasirPage()
+/fashionkas/catalog       → catalogManagePage()
+/fashionkas/orders        → ordersPage()
+/fashionkas/settings      → settingsPage()
+/fashionkas/wa            → waAutomationPage()
+/fashionkas/reports       → reportsPage()
+/fashionkas/scout         → scoutAgentPage()
+/fashionkas/closer        → closerAgentPage()
+/fashionkas/onboarding    → onboardingPage()
+/catalog/:slug            → catalogPublicPage()
+```
+
+---
+
+## 3. MODULE STRUCTURE (7,914 LOC)
+
 ```
 src/
-├── index.tsx              # Main entry (120 loc)
+├── index.tsx                  # Entry point (120 loc)
 ├── lib/
-│   └── supabase.ts        # Supabase REST client + JWT + PIN hash (154 loc)
+│   └── supabase.ts            # DB client + JWT + PIN hash (154 loc)
 ├── routes/
-│   ├── auth.ts            # Auth: register, login, profile (202 loc)
-│   ├── products.ts        # CRUD products (133 loc)
-│   ├── orders.ts          # Order management (202 loc)
-│   ├── customers.ts       # Customer list (46 loc)
-│   ├── dashboard.ts       # Stats & charts (149 loc)
-│   ├── wa.ts              # Fonnte WA integration (598 loc)
-│   ├── reports.ts         # Report endpoints (125 loc)
-│   ├── images.ts          # R2 image upload/serve (182 loc)
-│   ├── ai.ts              # Scout + Closer agents (417 loc)
-│   └── webhook.ts         # Fonnte webhook bot (696 loc) ← LARGEST
+│   ├── auth.ts                # Register, login, profile (202 loc)
+│   ├── products.ts            # CRUD products (133 loc)
+│   ├── orders.ts              # Order management (202 loc)
+│   ├── customers.ts           # Customer list (46 loc)
+│   ├── dashboard.ts           # Stats & charts (149 loc)
+│   ├── wa.ts                  # Fontte WA integration (598 loc)
+│   ├── reports.ts             # Report endpoints (125 loc)
+│   ├── images.ts              # R2 image upload/serve (182 loc)
+│   ├── ai.ts                  # Scout + Closer agents (417 loc)
+│   └── webhook.ts             # Fontte webhook bot (696 loc) ← LARGEST
 └── fashion/
-    ├── layout.ts          # Shared HTML layout + PWA (297 loc)
+    ├── layout.ts              # App shell + core JS v3.0 (300 loc)
     └── pages/
-        ├── landing.ts     # Landing page (310 loc)
-        ├── auth.ts        # Login + Register (440 loc)
-        ├── dashboard.ts   # Dashboard (223 loc)
-        ├── kasir.ts       # POS/Kasir (566 loc)
+        ├── landing.ts         # Landing page v3.0 (420 loc) ← REDESIGNED
+        ├── auth.ts            # Login + Register (440 loc)
+        ├── dashboard.ts       # Dashboard (223 loc)
+        ├── kasir.ts           # POS/Kasir (566 loc)
         ├── catalog-manage.ts  # Catalog CRUD (553 loc)
         ├── catalog-public.ts  # Public catalog (256 loc)
-        ├── orders.ts      # Order management (345 loc)
-        ├── settings.ts    # Settings (500 loc)
+        ├── orders.ts          # Order management (345 loc)
+        ├── settings.ts        # Settings (480 loc)
         ├── wa-automation.ts   # WA automation UI (404 loc)
-        ├── reports.ts     # Reports (275 loc)
-        ├── scout-agent.ts # Scout AI (229 loc)
+        ├── reports.ts         # Reports (275 loc)
+        ├── scout-agent.ts     # Scout AI (182 loc)
         ├── closer-agent.ts    # Closer AI (279 loc)
-        └── onboarding.ts # Onboarding flow (317 loc)
+        └── onboarding.ts      # Onboarding flow (317 loc)
 ```
 
 ---
 
-## 3. DATA ARCHITECTURE
+## 4. DATA ARCHITECTURE
 
-### 3.1 Database: Supabase PostgreSQL
+### Database: Supabase PostgreSQL (6 tables)
 
-```
-┌──────────┐     ┌──────────┐     ┌─────────────┐
-│  stores   │────>│ products  │     │  customers   │
-│  (tenant) │     │  (catalog)│     │  (database)  │
-└────┬─────┘     └──────────┘     └──────────────┘
-     │                                    │
-     │           ┌──────────┐            │
-     └──────────>│  orders   │<───────────┘
-                 │(transaksi)│
-                 └────┬─────┘
-                      │
-                 ┌────▼──────┐     ┌─────────────┐
-                 │order_items │     │ wa_messages  │
-                 │  (detail)  │     │  (log WA)   │
-                 └────────────┘     └─────────────┘
-```
+| Table | Key Fields | Est. Rows |
+|-------|------------|-----------|
+| **stores** | id, name, slug, owner_phone, pin_code, subscription_tier | 1-100 |
+| **products** | id, store_id, name, category, price, cost_price, stock, sizes[], colors[], image_url | 10-5000 |
+| **orders** | id, store_id, order_number, customer_name, total_amount, total_profit, payment_status | 10-10000 |
+| **order_items** | id, order_id, product_id, product_name, quantity, unit_price, subtotal | 20-30000 |
+| **customers** | id, store_id, name, phone, total_orders, total_spent, segment | 5-5000 |
+| **wa_messages** | id, store_id, phone, message_type, message, status | 50-50000 |
 
-### 3.2 Table Summary
-
-| Table | Row Count (est.) | Key Fields |
-|-------|-----------------|------------|
-| **stores** | 1-100 | id, name, slug, owner_phone, pin_code, subscription_tier |
-| **products** | 10-5000 | id, store_id, name, category, price, cost_price, stock, sizes[], colors[], image_url |
-| **orders** | 10-10000 | id, store_id, order_number, customer_name, total_amount, total_profit, payment_status |
-| **order_items** | 20-30000 | id, order_id, product_id, product_name, quantity, unit_price, subtotal |
-| **customers** | 5-5000 | id, store_id, name, phone, total_orders, total_spent, segment |
-| **wa_messages** | 50-50000 | id, store_id, phone, message_type, message, status |
-
-### 3.3 Multi-Tenant Isolation
-- Semua table punya `store_id` column
-- JWT token berisi `store_id` — digunakan untuk filter semua query
-- RLS enabled di semua table
-- Service role key dipakai di backend (bukan anon key)
+### Multi-Tenant: store_id + JWT + RLS on all tables.
 
 ---
 
-## 4. DATA FLOW
-
-### 4.1 Order Creation
-```
-[User tap "Simpan Transaksi" di POS]
-         │
-         ▼
-[POST /api/orders]
-         │
-         ├→ Validate: cart items, stock availability
-         ├→ Number coercion: price, qty, cost_price
-         ├→ Resolve product_name (item.name || DB lookup)
-         ├→ INSERT orders (header)
-         ├→ INSERT order_items (detail per produk)
-         ├→ UPDATE products (deduct stock, increment total_sold)
-         ├→ UPSERT customers (auto-create/update)
-         ├→ Determine payment_status (paid/dp/pending)
-         ├→ (Optional) POST Fonnte API → kirim struk WA
-         │
-         ▼
-[Response: { order_id, order_number, total, items }]
-```
-
-### 4.2 WA Auto-Reply Bot
-```
-[Customer kirim WA ke nomor toko]
-         │
-         ▼
-[Fonnte receives → POST /api/webhook/incoming]
-         │
-         ├→ Parse message text
-         ├→ Match command:
-         │   ├─ "HELP/MENU"     → kirim menu
-         │   ├─ "KATALOG/HARGA" → kirim daftar produk
-         │   ├─ "CARI [keyword]"→ search products
-         │   ├─ "ORDER [produk]"→ create order request
-         │   ├─ "CEK [no]"     → check order status
-         │   ├─ "STOK"         → stock summary
-         │   ├─ "LAPORAN"      → daily report
-         │   └─ (other)        → default response
-         │
-         ├→ POST Fonnte API → kirim reply
-         ├→ INSERT wa_messages (log)
-         │
-         ▼
-[Customer receives reply di WA]
-```
-
----
-
-## 5. SECURITY ARCHITECTURE
+## 5. SECURITY
 
 | Layer | Implementation |
 |-------|---------------|
-| **Authentication** | Custom JWT (HS256), 30-day expiry |
-| **PIN Storage** | SHA-256 + salt ("fashionkas-salt-2026") |
-| **Tenant Isolation** | JWT store_id → scopes all DB queries |
-| **HTTPS** | Cloudflare auto-HTTPS |
-| **CORS** | Enabled for /api/* routes |
-| **Secrets** | Cloudflare Secrets (production), .dev.vars (local) |
-| **RLS** | Supabase Row Level Security on all tables |
+| Auth | Custom JWT (HS256, 30-day) |
+| PIN | SHA-256 + salt |
+| HTTPS | Cloudflare auto |
+| CORS | /api/* routes |
+| Secrets | CF Secrets (prod), .dev.vars (local) |
+| RLS | Supabase Row Level Security |
 
-### Environment Variables:
-```
-SUPABASE_URL          → Supabase REST endpoint
-SUPABASE_ANON_KEY     → Public key (used in frontend)
-SUPABASE_SERVICE_KEY  → Service role key (backend only)
-JWT_SECRET            → JWT signing secret
-FONNTE_TOKEN          → Fonnte device token
-FONNTE_ACCOUNT_TOKEN  → Fonnte account token
-SCRAPERAPI_KEY        → ScraperAPI key (for AI agents)
-R2_BUCKET             → Cloudflare R2 bucket binding
-```
+### KNOWN SECURITY DEBT:
+- Supabase keys visible in wrangler.jsonc vars (should be CF Secrets)
+- No rate limiting on /api/auth/* (brute force risk)
+- Single Fontte token shared across all stores
 
 ---
 
-## 6. BUILD & DEPLOYMENT
+## 6. BUILD & DEPLOY
 
-### 6.1 Build Process
 ```
-Source (src/) → Vite Build → dist/
-                              ├── _worker.js    (~376KB compiled)
-                              ├── _routes.json  (routing config)
-                              └── static/       (from public/)
-```
-
-### 6.2 Deployment
-```
-Local Dev:
-  npm run build
-  wrangler pages dev dist --ip 0.0.0.0 --port 3000
-
-Production:
-  npm run build
-  wrangler pages deploy dist --project-name fashionkas
-  → https://fashionkas.pages.dev
-```
-
-### 6.3 CI/CD
-```
-Git push to main → Cloudflare Pages auto-deploy (if configured)
-OR
-Manual: npm run deploy:prod
+Build:   src/ → Vite → dist/ (_worker.js 404KB + _routes.json + static/)
+Local:   npm run build && wrangler pages dev dist --ip 0.0.0.0 --port 3000
+Prod:    npm run build && wrangler pages deploy dist --project-name fashionkas
+URL:     https://fashionkas.pages.dev
 ```
 
 ---
@@ -271,27 +157,31 @@ Manual: npm run deploy:prod
 
 | Metric | Target | Current |
 |--------|--------|---------|
-| **Worker Size** | < 1MB | ~376KB ✅ |
-| **Page Load** | < 3s on 3G | ~1.5s ✅ |
-| **API Response** | < 500ms | ~200ms ✅ |
-| **Build Time** | < 10s | ~1s ✅ |
-| **Offline Support** | Yes | Yes (SW v2.5) ✅ |
+| Worker Size | < 1MB | 404KB |
+| Page Load | < 3s on 3G | ~1.5s |
+| API Response | < 500ms | ~200ms |
+| Build Time | < 10s | ~1s |
+| Offline Support | Yes | Yes (SW v2.5) |
 
 ---
 
-## 8. KNOWN TECHNICAL DEBT
+## 8. DESIGN SYSTEM (NEW v3.1)
 
-| Issue | Severity | Plan |
-|-------|----------|------|
-| Inline JS in page templates | Medium | Gradual refactor to component-based |
-| Supabase keys in wrangler.jsonc vars | High | Move to CF Secrets + .dev.vars |
-| No automated tests | Medium | Add integration tests phase 2 |
-| No rate limiting on auth endpoints | Medium | Add rate limiter middleware |
-| Single Fonnte token for all stores | High | Per-store Fonnte config needed |
-| No image optimization | Low | Add resize on upload |
+### Color Tokens:
+- Primary: `#A855F7` (purple), Dark: `#7C3AED`, Light: `#C084FC`
+- Surface: `#030712` (bg), `#0D1117` (card), `#161B22` (nested)
+- Success: `#10B981`, Danger: `#EF4444`, Warning: `#F59E0B`
+
+### UX Patterns:
+- Glass morphism cards with `backdrop-filter: blur(20px)`
+- Skeleton shimmer loading (`@keyframes skeletonShimmer`)
+- Page fade-in animation (`@keyframes pageFadeIn`)
+- Button micro-interaction (scale 0.97 on active)
+- Card hover (translateY -3px + purple glow)
+- Toast with enter/exit animations
+- Input focus glow (purple ring)
 
 ---
 
-**FashionKas Architecture v3.0**
+**FashionKas Architecture v3.1 | 26 Maret 2026**
 **Document**: docs/fashionkas/ARCHITECTURE.md
-**Date**: 25 Maret 2026

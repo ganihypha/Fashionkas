@@ -1,17 +1,22 @@
 # FASHIONKAS — DESIGN DOCUMENT
 ## Layer 1: UI/UX Design System & Brand Guidelines
-**Version**: 1.0 | **Date**: 25 Maret 2026 | **Status**: LIVE
+**Version**: 2.0 | **Date**: 26 Maret 2026 | **Status**: LIVE (Upgraded)
 
 ---
 
 ## 1. DESIGN PHILOSOPHY
 
+### Anti-Scam, Trust-First Approach (NEW v2.0):
+Website reseller sering terlihat seperti scam karena: dark theme tanpa social proof, copy terlalu SaaS/technical, tidak ada FAQ, tidak ada trust signals, loading state kosong. FashionKas v3.0 mengatasi semua ini:
+
 ### Prinsip Utama:
-1. **Mobile-First** — 95% user buka dari HP, bukan laptop
-2. **WA-Native Feel** — UI harus terasa familiar seperti WA (chat bubble, green accents)
-3. **Zero Learning Curve** — User bisa pakai tanpa tutorial dalam 3 menit
-4. **Ringan** — Harus jalan mulus di HP RAM 3GB + internet biasa
-5. **Bahasa Indonesia 100%** — Tidak ada satu kata English di UI
+1. **Trust-First** — Social proof, trust badges, FAQ, security signals di setiap touchpoint
+2. **Mobile-First** — 95% user buka dari HP, bukan laptop
+3. **WA-Native Feel** — Familiar seperti WA (green accents, chat-like patterns)
+4. **Zero Learning Curve** — Bisa pakai tanpa tutorial dalam 3 menit
+5. **Ringan** — Jalan mulus di HP RAM 3GB + internet biasa
+6. **100% Bahasa Indonesia** — Tidak ada kata English di user-facing UI
+7. **Pain-First Copy** — Headline berbicara tentang masalah user, bukan fitur
 
 ---
 
@@ -19,285 +24,220 @@
 
 ### 2.1 Color Palette
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| **Purple (Primary)** | `#A855F7` | Buttons, accents, highlights |
-| **Purple Dark** | `#7C3AED` | Hover states, active elements |
-| **Purple Light** | `#C084FC` | Secondary buttons, badges |
-| **Purple Highlight** | `#D8B4FE` | Subtle accents |
-| **Gold** | `#F0A500` | Premium badges, CTAs, pricing |
-| **Background Dark** | `#030712` | Main background (dark theme) |
-| **Card Dark** | `#0D1117` | Card backgrounds |
-| **Card Secondary** | `#161B22` | Nested card backgrounds |
-| **Text Primary** | `#F9FAFB` | Main text (white) |
-| **Text Secondary** | `#9CA3AF` | Secondary text (gray) |
-| **Success** | `#10B981` | Positive states, "lunas" |
-| **Danger** | `#EF4444` | Error states, "belum bayar" |
-| **Warning** | `#F59E0B` | Warning states, "DP" |
-| **Border** | `#374151` | Card borders |
+| Color | Hex | CSS Variable | Usage |
+|-------|-----|-------------|-------|
+| **Purple Primary** | `#A855F7` | `fk-purple` | Buttons, accents, highlights |
+| **Purple Dark** | `#7C3AED` | `fk-purple-dark` | Hover states, gradients |
+| **Purple Light** | `#C084FC` | `fk-purple-light` | Secondary buttons, badges |
+| **Purple Deep** | `#6D28D9` | `fk-purple-deep` | Active states |
+| **Surface 0** | `#030712` | `surface-0` | Main background |
+| **Surface 1** | `#0D1117` | `surface-1` | Card backgrounds |
+| **Surface 2** | `#161B22` | `surface-2` | Nested elements |
+| **Surface 3** | `#1E2430` | `surface-3` | Elevated elements |
+| **Text Primary** | `#F9FAFB` | — | Main text (white) |
+| **Text Secondary** | `#9CA3AF` | — | Descriptions |
+| **Text Muted** | `#6B7280` | — | Hints, placeholders |
+| **Success** | `#10B981` | — | Positive: lunas, active |
+| **Danger** | `#EF4444` | — | Error: belum bayar |
+| **Warning** | `#F59E0B` | — | Caution: DP |
+| **WA Green** | `#25D366` | `wa-green` | WhatsApp buttons |
 
 ### 2.2 Typography
-- **Font**: Inter (Google Fonts)
-- **Weights**: 300 (light), 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
-- **Body**: 14-16px
-- **Headings**: 18-24px
-- **Small text**: 12px
+- **Primary Font**: Inter (Google Fonts) — body text, UI elements
+- **Heading Font**: Montserrat — headings, brand text
+- **Mono Font**: JetBrains Mono — prices, numbers, codes
+- **Weights**: 300-800 (Inter), 600-900 (Montserrat)
+- **Body Size**: 14-16px
+- **Heading Size**: 18-32px (responsive)
+- **Small/Caption**: 10-12px
 
-### 2.3 Logo & Icons
-- **Logo**: "FashionKas" text with shopping bag + sparkle icon
-- **Icon Library**: Font Awesome 6.4 (CDN)
-- **PWA Icons**: 192x192 & 512x512 purple gradient icons
+### 2.3 Logo
+- Text logo: "FashionKas" — "Fashion" in purple, "Kas" in white
+- Icon: `fa-solid fa-shirt` in purple gradient square (8px radius)
+- PWA Icons: 192x192 & 512x512 purple gradient
 
 ### 2.4 Theme
-- **Default**: Dark theme (sesuai trend dan terkesan premium)
-- **Future**: Light theme toggle (belum prioritas)
+- **Default**: Dark theme (premium feel, reduces eye strain)
+- **Glass Morphism**: `backdrop-filter: blur(20px)`, semi-transparent bg
+- **Gradients**: Purple gradient for primary CTAs
 
 ---
 
 ## 3. LAYOUT SYSTEM
 
-### 3.1 App Shell
+### 3.1 App Shell (Authenticated Pages)
 ```
-┌─────────────────────────────────┐
-│  Top Bar (logo + navigation)     │
-│  ┌───────────────────────────┐  │
-│  │                           │  │
-│  │     Page Content          │  │
-│  │     (scrollable)          │  │
-│  │                           │  │
-│  │                           │  │
-│  └───────────────────────────┘  │
-│                                  │
-│  ┌───────────────────────────┐  │
-│  │  Bottom Navigation Bar     │  │
-│  │  [Dashboard][Sale][Catalog]│  │
-│  │  [Orders][More]            │  │
-│  └───────────────────────────┘  │
-└─────────────────────────────────┘
+┌──────────────────────────────┐
+│ Top Bar: [Logo] ... [Settings][Logout][Avatar]
+│ ─────────────────────────────│
+│ Desktop Nav (hidden on mobile):
+│ [Dashboard][Katalog][Kasir][Pesanan][WA]...
+│ ─────────────────────────────│
+│                              │
+│   Page Content (scrollable)  │
+│   animation: pageFadeIn 0.3s │
+│                              │
+│ ─────────────────────────────│
+│ Bottom Nav (mobile only):    │
+│ [Dashboard][Katalog][+Jual][Pesanan][Lainnya]
+│ "+" button: floating FAB style│
+└──────────────────────────────┘
 ```
 
-### 3.2 Bottom Navigation (Mobile)
-
-| Tab | Icon | Path | Label |
-|-----|------|------|-------|
-| Dashboard | `fa-chart-line` | `/fashionkas/dashboard` | Dashboard |
-| Kasir | `fa-cash-register` | `/fashionkas/sale` | Kasir |
-| Katalog | `fa-box-open` | `/fashionkas/catalog` | Katalog |
-| Pesanan | `fa-receipt` | `/fashionkas/orders` | Pesanan |
-| Lainnya | `fa-bars` | (expand menu) | Lainnya |
+### 3.2 Landing Page (Public)
+```
+┌──────────────────────────────┐
+│ Fixed Navbar (glass): [Logo] [Masuk] [Daftar]
+│──────────────────────────────│
+│ HERO: Pain-focused headline  │
+│ + trust micro-signals        │
+│ + dual CTA buttons           │
+│──────────────────────────────│
+│ PAIN POINTS: 4 problem cards │
+│──────────────────────────────│
+│ CARA KERJA: 3 numbered steps │
+│──────────────────────────────│
+│ DEMO KATALOG: interactive    │
+│──────────────────────────────│
+│ FITUR: 6 feature cards       │
+│──────────────────────────────│
+│ TESTIMONIALS: 3 beta testers │
+│──────────────────────────────│
+│ PRICING: Single beta card    │
+│──────────────────────────────│
+│ FAQ: 5 accordion questions   │
+│──────────────────────────────│
+│ FINAL CTA                    │
+│──────────────────────────────│
+│ FOOTER: badges + links       │
+└──────────────────────────────┘
+```
 
 ### 3.3 Responsive Breakpoints
-- **Mobile**: < 640px (primary target)
+- **Mobile**: < 640px (primary target, 95% users)
 - **Tablet**: 640px - 1024px
-- **Desktop**: > 1024px
+- **Desktop**: > 1024px (admin/owner use)
 
 ---
 
-## 4. PAGE DESIGNS
+## 4. COMPONENT PATTERNS
 
-### 4.1 Landing Page (`/`)
-```
-┌──────────────────────────┐
-│  [Logo] FashionKas       │
-│  [Login] [Daftar Gratis] │
-├──────────────────────────┤
-│                          │
-│  HERO SECTION            │
-│  "Rapikan Jualan Fashion │
-│   dari WhatsApp"         │
-│  [Daftar Gratis →]       │
-│                          │
-├──────────────────────────┤
-│  CARA KERJA (3 steps)    │
-│  1. Upload Produk        │
-│  2. Share 1 Link Katalog │
-│  3. Catat Transaksi      │
-├──────────────────────────┤
-│  DEMO KATALOG            │
-│  (Preview katalog contoh)│
-├──────────────────────────┤
-│  6 FITUR UNGGULAN        │
-│  Grid 2x3 feature cards  │
-├──────────────────────────┤
-│  PRICING (3 tiers)       │
-│  Starter | Basic | Pro   │
-├──────────────────────────┤
-│  TESTIMONIAL (3 orang)   │  ← MISSING: placeholder needed
-├──────────────────────────┤
-│  CTA FINAL               │
-│  [Daftar Sekarang →]     │
-├──────────────────────────┤
-│  Footer                  │
-│  © 2026 FashionKas       │
-└──────────────────────────┘
+### 4.1 Glass Card
+```css
+.glass { 
+  background: rgba(13, 17, 23, 0.8); 
+  backdrop-filter: blur(20px); 
+  border: 1px solid rgba(255,255,255,0.06); 
+}
 ```
 
-### 4.2 Dashboard (`/fashionkas/dashboard`)
-```
-┌──────────────────────────┐
-│  Selamat datang, [Nama]! │
-├──────────────────────────┤
-│  ┌────┐ ┌────┐ ┌────┐  │
-│  │Omzet│ │Order│ │Profit│
-│  │Hari │ │Hari │ │Hari  │
-│  │ini  │ │ini  │ │ini   │
-│  └────┘ └────┘ └────┘  │
-├──────────────────────────┤
-│  Revenue Chart (7 hari)  │
-│  [bar chart]             │
-├──────────────────────────┤
-│  Top Products            │
-│  1. Gamis Marun - 12 pcs │
-│  2. Hijab Pastel - 8 pcs │
-├──────────────────────────┤
-│  Low Stock Alert ⚠️      │
-│  Rok Plisket - 2 left    │
-├──────────────────────────┤
-│  [Bottom Nav]            │
-└──────────────────────────┘
+### 4.2 Interactive Card
+```css
+.card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.card-hover:hover { 
+  transform: translateY(-3px); 
+  border-color: rgba(168,85,247,0.15);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4); 
+}
 ```
 
-### 4.3 Kasir/POS (`/fashionkas/sale`)
+### 4.3 Primary Button
+```css
+.btn-primary { 
+  background: linear-gradient(135deg, #A855F7, #7C3AED); 
+  box-shadow: 0 4px 20px rgba(168,85,247,0.3);
+  transition: all 0.3s; 
+}
+.btn-primary:hover { box-shadow: 0 6px 30px rgba(168,85,247,0.45); transform: translateY(-1px); }
+button:active { transform: scale(0.97); }
 ```
-┌──────────────────────────┐
-│  🔍 Cari Produk          │
-│  [Search input]          │
-├──────────────────────────┤
-│  Category pills:         │
-│  [Semua] [Gamis] [Hijab] │
-├──────────────────────────┤
-│  Product Grid:           │
-│  ┌─────┐ ┌─────┐       │
-│  │ Img │ │ Img │        │
-│  │ Name│ │ Name│        │
-│  │ Rp  │ │ Rp  │        │
-│  │[+]  │ │[+]  │        │
-│  └─────┘ └─────┘        │
-├──────────────────────────┤
-│  KERANJANG (3 items)     │
-│  ┌────────────────────┐  │
-│  │ Gamis Marun x2 80K │  │
-│  │ Size: L, Warna: Marun│
-│  │ Hijab Pastel x1 45K│  │
-│  └────────────────────┘  │
-│  Subtotal: Rp 205.000   │
-│  Diskon: -Rp 5.000      │
-│  Ongkir: Rp 15.000      │
-│  TOTAL: Rp 215.000      │
-│  Profit: Rp 65.000      │
-├──────────────────────────┤
-│  Info Customer:          │
-│  [Nama] [No WA]         │
-│  Pembayaran: [Transfer]  │
-│  Status: [Lunas/DP/Blm] │
-│  [🛒 Simpan Transaksi]  │
-└──────────────────────────┘
+
+### 4.4 Skeleton Loading (NEW v2.0)
+```css
+.skeleton { 
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 200% 100%; 
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
 ```
+
+### 4.5 Toast Notifications
+- **Success**: Green (#10B981), auto-dismiss 3s
+- **Error**: Red (#EF4444) with message
+- **Info**: Blue (#3B82F6)
+- Enter: slide up + fade in
+- Exit: fade out + slide up
+
+### 4.6 Input Fields
+```css
+input:focus { 
+  border-color: rgba(168,85,247,0.5); 
+  box-shadow: 0 0 0 3px rgba(168,85,247,0.1); 
+}
+```
+
+### 4.7 Status Badges
+- Lunas: `bg-green-500/15 text-green-400 border-green-500/30`
+- DP: `bg-yellow-500/15 text-yellow-400 border-yellow-500/30`
+- Belum Bayar: `bg-red-500/15 text-red-400 border-red-500/30`
 
 ---
 
-## 5. COMPONENT PATTERNS
+## 5. ANIMATION SYSTEM (NEW v2.0)
 
-### 5.1 Cards
-```html
-<!-- Standard Card -->
-<div class="bg-[#0D1117] border border-[#374151] rounded-xl p-4">
-  <h3 class="text-white font-semibold">Title</h3>
-  <p class="text-gray-400 text-sm">Description</p>
-</div>
-```
-
-### 5.2 Buttons
-```html
-<!-- Primary Button (Purple) -->
-<button class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold">
-  Action
-</button>
-
-<!-- Gold CTA Button -->
-<button class="bg-gradient-to-r from-yellow-500 to-orange-500 text-black px-6 py-3 rounded-xl font-bold">
-  Daftar Gratis →
-</button>
-
-<!-- Outline Button -->
-<button class="border border-purple-500 text-purple-400 px-4 py-2 rounded-lg hover:bg-purple-500/10">
-  Secondary
-</button>
-```
-
-### 5.3 Status Badges
-```html
-<!-- Lunas (Green) -->
-<span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">Lunas</span>
-
-<!-- DP (Yellow) -->
-<span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs">DP</span>
-
-<!-- Pending (Red) -->
-<span class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs">Belum Bayar</span>
-```
-
-### 5.4 Input Fields
-```html
-<input type="text" placeholder="Nama produk..."
-  class="w-full bg-[#161B22] border border-[#374151] rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
-```
+| Animation | Duration | Easing | Usage |
+|-----------|----------|--------|-------|
+| `pageFadeIn` | 0.3s | ease-out | Page content entrance |
+| `fadeUp` | 0.6s | ease-out | Landing page sections |
+| `float` | 5s | ease-in-out | Demo catalog card |
+| `skeletonShimmer` | 1.5s | ease-in-out | Loading states |
+| `toastIn` | 0.3s | ease-out | Toast entrance |
+| `toastOut` | 0.3s | ease-in | Toast exit |
+| `slideUp` | 0.2s | cubic-bezier | More menu popup |
+| `waPulse` | 2s | ease | WA button pulse |
 
 ---
 
-## 6. UX PATTERNS
+## 6. TRUST SIGNALS CHECKLIST (NEW v2.0)
 
-### 6.1 Feedback
-- **Success**: Green toast notification (auto-dismiss 3s)
-- **Error**: Red toast notification with error message
-- **Loading**: Spinner + "Memproses..." text
-- **Empty State**: Illustration + helpful message + CTA
-
-### 6.2 Navigation
-- Bottom tab bar (5 tabs) for main navigation
-- Sidebar menu for secondary pages (Settings, WA, Reports)
-- Back button on all sub-pages
-- Active tab highlighted with purple
-
-### 6.3 Form Patterns
-- Real-time validation (on blur)
-- Auto-save (where applicable)
-- Confirm dialogs for destructive actions (delete)
-- Number inputs with Rp prefix formatting
-
-### 6.4 Mobile Gestures
-- Pull-to-refresh (future)
-- Swipe for quick actions (future)
-- Tap to expand/collapse cards
+| Signal | Location | Status |
+|--------|----------|--------|
+| "Aman & terenkripsi" | Hero, pricing | LIVE |
+| "Tanpa kartu kredit" | Hero, pricing | LIVE |
+| "Setup 5 menit" | Hero | LIVE |
+| SSL Encrypted badge | Footer | LIVE |
+| Cloudflare Edge badge | Footer | LIVE |
+| Testimonials (3) | Social proof section | LIVE (beta) |
+| FAQ (5 questions) | FAQ section | LIVE |
+| Star ratings | Testimonials | LIVE |
+| Green "BUKA" badge | Demo catalog | LIVE |
+| Copyright | Footer | LIVE |
 
 ---
 
-## 7. PWA SPECIFICATIONS
-
-| Feature | Implementation |
-|---------|---------------|
-| **Manifest** | name, icons, theme_color, start_url |
-| **Service Worker** | v2.5, network-first for HTML, cache for assets |
-| **Install Banner** | Custom prompt after 2 page visits |
-| **Offline** | Cached pages + "Offline" fallback |
-| **Icons** | 192x192 + 512x512 purple gradient |
-| **Theme Color** | `#A855F7` (purple) |
-| **Background** | `#0A0A0A` (dark) |
-
----
-
-## 8. ACCESSIBILITY
+## 7. ACCESSIBILITY
 
 | Guideline | Status |
 |-----------|--------|
-| Color contrast (WCAG AA) | ✅ White on dark passes |
-| Touch targets (>= 44px) | ✅ All buttons/links |
-| Focus indicators | 🟡 Partial |
-| Screen reader labels | 🟡 Partial |
-| Keyboard navigation | ❌ Not yet |
+| Color contrast WCAG AA | PASS |
+| Touch targets >= 44px | PASS |
+| Focus indicators (input glow) | PASS |
+| Screen reader labels | PARTIAL |
+| Keyboard navigation | TODO |
 
 ---
 
-**FashionKas Design Document v1.0**
+## 8. PWA
+
+| Feature | Status |
+|---------|--------|
+| Manifest + icons | LIVE |
+| Service Worker v2.5 | LIVE |
+| Install banner | LIVE |
+| Offline fallback | LIVE |
+| Theme color #A855F7 | LIVE |
+
+---
+
+**FashionKas Design v2.0 | 26 Maret 2026**
 **Document**: docs/fashionkas/DESIGN.md
-**Date**: 25 Maret 2026
