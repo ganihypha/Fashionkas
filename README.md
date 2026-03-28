@@ -1,157 +1,127 @@
-# FashionKas v2.5
-## Katalog Digital + Kasir Penjualan + WA Automation untuk Fashion Reseller Indonesia
+# FashionKas v3.0
 
-**Production**: https://fashionkas.pages.dev
-**GitHub**: https://github.com/ganihypha/Fashionkas
-**Webhook URL**: https://fashionkas.pages.dev/api/webhook/incoming
+Katalog Digital + Kasir Penjualan + Follow-up Pelanggan untuk Reseller Fashion Indonesia.
 
----
+## URLs
+- **Production**: https://fashionkas.pages.dev
+- **GitHub**: https://github.com/ganihypha/Fashionkas
+- **Sandbox Preview**: (dev server on port 3000)
 
-## 3-Layer Brand Architecture
+## Architecture (3-Layer Brand System)
 
-Proyek ini adalah bagian dari ekosistem 3 layer yang terdefinisi jelas:
-
-| Layer | Brand | Role | Status |
-|-------|-------|------|--------|
-| **Layer 1** | **FashionKas** | Brand standalone - Fashion reseller WA-first | LIVE v2.5 |
-| **Layer 2** | **ResellerKas** | Brand standalone - Multi-category reseller | PLANNING |
-| **Layer 3** | **Sovereign** | Engine/Umbrella - Mesin di belakang semua produk | CONCEPTUAL |
-
-> **Baca [docs/MASTER_CLARITY.md](docs/MASTER_CLARITY.md) untuk detail arsitektur 3 layer.**
-
----
-
-## Documentation Suite
-
-### Master Document
-- **[MASTER_CLARITY.md](docs/MASTER_CLARITY.md)** — Arsitektur 3 layer (FashionKas / ResellerKas / Sovereign)
-
-### FashionKas (Layer 1 - ACTIVE)
-- **[PRD](docs/fashionkas/PRD.md)** — Product Requirements Document v3.0
-- **[ARCHITECTURE](docs/fashionkas/ARCHITECTURE.md)** — Technical Architecture v3.0
-- **[DESIGN](docs/fashionkas/DESIGN.md)** — UI/UX Design System v1.0
-- **[TODO](docs/fashionkas/TODO.md)** — Execution Tracker v3.0
-
-### ResellerKas (Layer 2 - PLANNING)
-- **[PRD](docs/resellerkas/PRD.md)** — Product Requirements Document v1.0
-- **[ARCHITECTURE](docs/resellerkas/ARCHITECTURE.md)** — Technical Architecture v1.0
-- **[DESIGN](docs/resellerkas/DESIGN.md)** — UI/UX Design v1.0
-- **[TODO](docs/resellerkas/TODO.md)** — Execution Tracker v1.0
-
-### Sovereign (Layer 3 - CONCEPTUAL)
-- **[PRD](docs/sovereign/PRD.md)** — Product Requirements Document v1.0
-- **[ARCHITECTURE](docs/sovereign/ARCHITECTURE.md)** — Engine Architecture v1.0
-- **[TODO](docs/sovereign/TODO.md)** — Execution Tracker v1.0
-
-### Legacy Docs
-- **[Deep Dive Master](docs/FASHIONKAS_DEEP_DIVE_MASTER_DOC.md)** — Comprehensive analysis (16 research files)
-- **[Empire PRD v2](docs/SOVEREIGN_EMPIRE_PRD_V2.md)** — Original Sovereign vision
-- **[Empire Architecture v2](docs/SOVEREIGN_EMPIRE_ARCHITECTURE_V2.md)** — Original system design
-
----
-
-## Completed Features (v2.5)
-
-### Kasir Digital (POS) - 100%
-- Tambah produk ke keranjang dengan size/color picker
-- Hitung otomatis total, profit, stok
-- Payment methods: Cash, Transfer, COD, Marketplace
-- Payment status: Lunas / DP / Belum Bayar
-- Auto-kirim struk via WhatsApp (Fonnte)
-
-### Katalog Online - 100%
-- CRUD produk dengan gambar, ukuran, warna
-- R2 image upload with drag-drop & camera
-- Category filter & search
-- Public catalog page `/catalog/:slug`
-
-### Order Management - 100%
-- List pesanan dengan filter status
-- Update status: pending > processing > shipped > delivered
-- Track resi otomatis
-
-### WhatsApp Automation (Fonnte) - 100%
-- Auto-kirim struk WA dari POS
-- Broadcast promo ke customer segment
-- Auto-reply bot (15+ commands)
-
-### Dashboard & Reports - 100%
-- Revenue, profit, orders per hari/minggu/bulan
-- Top products & low stock alerts
-- CSV export
-
-### PWA - 100%
-- Install dari browser ke home screen
-- Offline support (SW v2.5)
-
----
-
-## API Endpoints
-
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/api/health` | No | Health check |
-| POST | `/api/auth/register` | No | Register toko |
-| POST | `/api/auth/login` | No | Login |
-| GET | `/api/auth/me` | Yes | Info toko |
-| GET/POST/PUT/DELETE | `/api/products/*` | Yes | CRUD produk |
-| GET/POST/PUT | `/api/orders/*` | Yes | CRUD pesanan |
-| GET | `/api/customers` | Yes | List pelanggan |
-| POST | `/api/images/upload` | Yes | Upload gambar R2 |
-| POST | `/api/wa/*` | Yes | WA automation |
-| POST | `/api/webhook/incoming` | No | Fonnte webhook |
-| GET | `/api/dashboard/stats` | Yes | Statistik |
-| GET | `/api/reports/*` | Yes | Laporan |
-
----
+| Layer | Name | Purpose |
+|-------|------|---------|
+| **Front** | FashionKas | User-facing brand, fashion niche UI, landing page |
+| **Engine** | ResellerKas | Shared API routes, niche-agnostic, reusable |
+| **Strategy** | Sovereign | Internal holding/growth strategy (docs only) |
 
 ## Tech Stack
+- **Backend**: Hono v4 + Cloudflare Workers
+- **Database**: Supabase PostgreSQL (with RLS)
+- **Storage**: Cloudflare R2 (images) + Supabase Storage fallback
+- **WA Gateway**: Fonnte API
+- **Frontend**: Server-rendered HTML + Tailwind CSS (CDN) + vanilla JS
+- **PWA**: Service Worker + Web App Manifest
 
-| Component | Technology |
-|-----------|-----------|
-| Backend | Hono v4 + TypeScript |
-| Frontend | Tailwind CSS (CDN) + Vanilla JS |
-| Database | Supabase PostgreSQL |
-| Storage | Cloudflare R2 |
-| WA API | Fonnte.com |
-| Build | Vite + @hono/vite-cloudflare-pages |
-| Deploy | Cloudflare Pages |
+## Features (v3.0)
 
----
+### Completed
+| Feature | Path | Description |
+|---------|------|-------------|
+| Landing Page | `/` | Redesigned - simpler, 4 core features, niche fashion, beta CTA |
+| Registration | `/register` | PIN-based auth, store creation |
+| Login | `/login` | PIN-based, JWT token |
+| Dashboard | `/fashionkas/dashboard` | Revenue stats, charts, top products, alerts |
+| Katalog Produk | `/fashionkas/catalog` | CRUD, image upload (R2/Supabase/base64), featured toggle |
+| Kasir (POS) | `/fashionkas/sale` | Quick sale, cart, discount, WA receipt |
+| Pesanan | `/fashionkas/orders` | Order list, status tabs, tracking, detail modal |
+| **Pelanggan** | `/fashionkas/customers` | **NEW** Customer DB, search, segment (VIP/Active/New/Dormant), CRUD |
+| **Follow-up** | `/fashionkas/followup` | **NEW** Unpaid orders, pending ship, dormant customers, WA reminder |
+| WA Automation | `/fashionkas/wa` | Struk otomatis, broadcast, auto-reply |
+| Laporan | `/fashionkas/reports` | Daily/weekly/monthly reports |
+| Scout AI | `/fashionkas/scout` | Lead scoring & market analysis |
+| Closer AI | `/fashionkas/closer` | Follow-up suggestions & outreach |
+| Onboarding | `/fashionkas/onboarding` | 4-step guided tour for new users |
+| Settings | `/fashionkas/settings` | Store profile, PIN change |
+| Public Catalog | `/catalog/:slug` | Public catalog link for customers |
 
-## What's Next (Priority Order)
+### API Endpoints (Engine Layer)
+| Route | Methods | Description |
+|-------|---------|-------------|
+| `/api/auth` | POST register, login, me, update | PIN auth, JWT tokens |
+| `/api/products` | GET, POST, PUT, DELETE | Product CRUD with stock |
+| `/api/orders` | GET, POST, PUT | Order management with stock deduction |
+| `/api/customers` | GET, POST, PUT, DELETE | Customer CRUD + order history |
+| `/api/dashboard` | GET /stats | Dashboard statistics |
+| `/api/wa` | POST send/broadcast/poll/location | WhatsApp via Fonnte |
+| `/api/reports` | GET daily/weekly/monthly | Sales reports |
+| `/api/images` | POST upload, GET serve/list, DELETE | Image upload (R2 + fallback) |
+| `/api/ai` | POST scout/closer/insights | AI agent endpoints |
+| `/api/webhook` | POST /incoming | Fonnte webhook handler |
+| `/api/health` | GET | Health check + version info |
 
-1. **Rotate secrets** — Move keys to CF Secrets
-2. **Payment gateway** — Duitku integration for subscriptions
-3. **Get 10 pilot users** — Manual outreach to fashion resellers
-4. **Collect testimonials** — Real user proof for landing page
-5. **Per-store Fonnte** — Each store uses own WA number
+## Data Architecture
+- **stores**: Store profiles (name, slug, phone, WA)
+- **products**: Product catalog (name, price, cost, stock, images, sizes, colors)
+- **orders**: Order records (items, totals, profit, payment/shipping status)
+- **order_items**: Individual order line items
+- **customers**: Customer database (auto-saved from orders, with segment, notes)
+- **wa_messages**: WhatsApp message history
 
----
+## Security Changes (v3.0)
+- All secrets removed from `wrangler.jsonc` (was publicly committed!)
+- Secrets now stored in `.dev.vars` (in .gitignore, never committed)
+- For production: use `wrangler pages secret put` to set each secret
+- **Recommendation**: Rotate ALL exposed keys (Supabase, Fonnte, ScraperAPI, JWT)
 
-## Repo Structure
+## Deployment
 
+### Local Development
+```bash
+npm run build
+npm run dev:sandbox   # wrangler pages dev dist --ip 0.0.0.0 --port 3000
 ```
-Fashionkas/
-├── src/
-│   ├── index.tsx           # Main entry point
-│   ├── lib/supabase.ts     # Supabase client + JWT + PIN
-│   ├── routes/             # 10 API route modules
-│   └── fashion/            # 13 page modules
-├── public/                 # PWA assets
-├── docs/
-│   ├── MASTER_CLARITY.md   # 3-Layer architecture (NEW)
-│   ├── fashionkas/         # FashionKas docs (PRD, ARCH, DESIGN, TODO)
-│   ├── resellerkas/        # ResellerKas docs (PRD, ARCH, DESIGN, TODO)
-│   ├── sovereign/          # Sovereign docs (PRD, ARCH, TODO)
-│   └── [legacy docs]
-├── wrangler.jsonc
-├── package.json
-├── vite.config.ts
-└── README.md
+
+### Production (Cloudflare Pages)
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name fashionkas
+
+# Set secrets (one-time after credential rotation)
+npx wrangler pages secret put SUPABASE_URL --project-name fashionkas
+npx wrangler pages secret put SUPABASE_ANON_KEY --project-name fashionkas
+npx wrangler pages secret put SUPABASE_SERVICE_KEY --project-name fashionkas
+npx wrangler pages secret put JWT_SECRET --project-name fashionkas
+npx wrangler pages secret put FONNTE_TOKEN --project-name fashionkas
+npx wrangler pages secret put FONNTE_ACCOUNT_TOKEN --project-name fashionkas
+npx wrangler pages secret put SCRAPERAPI_KEY --project-name fashionkas
 ```
 
----
+## What's New in v3.0
+1. **Customer Database** - Full CRUD, auto-segment (VIP/Active/New/Dormant), auto-save from orders
+2. **Follow-up Reminder** - Unpaid orders, pending shipments, dormant customer re-engage via WA
+3. **Enhanced Image Upload** - 3-tier fallback: R2 -> Supabase Storage -> Base64
+4. **Landing Page Redesign** - Simpler, 4 core features, niche fashion focus
+5. **Security Fix** - Secrets removed from wrangler.jsonc, moved to .dev.vars
+6. **Brand Layer Separation** - Clear FashionKas (front) vs ResellerKas (engine) architecture
+7. **Updated Navigation** - Pelanggan + Follow-up added to desktop/mobile nav
 
-**FashionKas v2.5** — Rapikan Jualan Fashion dari WhatsApp
-**Last Updated**: 25 Maret 2026
+## Not Yet Implemented (P2+)
+- [ ] PDF/CSV Export for reports
+- [ ] Referral system
+- [ ] Multi-store support
+- [ ] Full Scout/Closer AI with real LLM integration
+- [ ] Stripe/Midtrans payment integration
+- [ ] Demo video on landing page
+- [ ] Real testimonials (currently placeholder)
+- [ ] Credential rotation (CRITICAL - do this before going live)
+
+## Next Steps
+1. **URGENT**: Rotate all exposed credentials (Supabase, Fonnte, JWT, ScraperAPI)
+2. Deploy v3.0 to Cloudflare Pages with new secrets
+3. Push to GitHub (requires auth setup)
+4. Start user acquisition (10 pilot resellers)
+5. Implement PDF export & referral system
+
+---
+**Status**: Active (Beta) | **Version**: 3.0 | **Last Updated**: 2026-03-28
