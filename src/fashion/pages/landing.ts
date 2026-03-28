@@ -1,6 +1,7 @@
-// Landing Page - FashionKas v3.0
-// REDESIGN: Simpler, niche fashion, trust-first, mobile-first
+// Landing Page - FashionKas v3.1
+// REDESIGN: Pain-first copy, trust signals, social proof, WA widget, professional footer
 // Brand: FashionKas (front layer) powered by ResellerKas engine
+// Updated: 2026-03-28
 export function landingPage(): string {
   return `<!DOCTYPE html>
 <html lang="id">
@@ -98,6 +99,33 @@ export function landingPage(): string {
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-credit-card text-green-500"></i>Tanpa kartu kredit</span>
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-green-500"></i>Setup 5 menit</span>
       </div>
+    </div>
+  </section>
+
+  <!-- PAIN POINTS -->
+  <section class="py-12 px-4 sm:px-6" style="background:linear-gradient(135deg,rgba(239,68,68,0.03),rgba(245,158,11,0.03))">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-red-400 text-xs font-bold uppercase tracking-widest mb-3">Masalah Reseller Fashion</p>
+      <h2 class="font-heading font-bold text-2xl sm:text-3xl mb-8">Pernah Ngalamin <span class="text-red-400">Ini</span>?</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto text-left">
+        <div class="glass rounded-xl p-4 border border-red-500/10 flex items-start gap-3">
+          <span class="text-red-400 text-sm mt-0.5"><i class="fa-solid fa-xmark"></i></span>
+          <div><p class="text-sm font-medium mb-0.5">Order Tenggelam di Chat WA</p><p class="text-[11px] text-gray-500">Scroll chat panjang, lupa siapa yang sudah bayar</p></div>
+        </div>
+        <div class="glass rounded-xl p-4 border border-red-500/10 flex items-start gap-3">
+          <span class="text-red-400 text-sm mt-0.5"><i class="fa-solid fa-xmark"></i></span>
+          <div><p class="text-sm font-medium mb-0.5">Kirim Foto Produk Satu-Satu</p><p class="text-[11px] text-gray-500">Customer tanya, harus screenshot dan kirim manual</p></div>
+        </div>
+        <div class="glass rounded-xl p-4 border border-red-500/10 flex items-start gap-3">
+          <span class="text-red-400 text-sm mt-0.5"><i class="fa-solid fa-xmark"></i></span>
+          <div><p class="text-sm font-medium mb-0.5">Stok Nggak Tercatat</p><p class="text-[11px] text-gray-500">Sudah terjual tapi masih ditawarkan ke customer lain</p></div>
+        </div>
+        <div class="glass rounded-xl p-4 border border-red-500/10 flex items-start gap-3">
+          <span class="text-red-400 text-sm mt-0.5"><i class="fa-solid fa-xmark"></i></span>
+          <div><p class="text-sm font-medium mb-0.5">Lupa Follow-up Pelanggan</p><p class="text-[11px] text-gray-500">Pelanggan lama hilang, nggak tahu siapa yang harus di-WA</p></div>
+        </div>
+      </div>
+      <p class="text-sm text-fk-purple font-bold mt-8"><i class="fa-solid fa-arrow-down mr-2"></i>FashionKas menyelesaikan semua itu</p>
     </div>
   </section>
 
@@ -318,16 +346,49 @@ export function landingPage(): string {
   </section>
 
   <!-- FOOTER -->
-  <footer class="section-divider py-8 px-4 sm:px-6">
-    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded-md fk-gradient flex items-center justify-center"><i class="fa-solid fa-shirt text-white text-[10px]"></i></div>
-        <span class="font-heading font-bold text-xs"><span class="text-fk-purple">Fashion</span>Kas</span>
-        <span class="text-[10px] text-gray-600">v3.0</span>
+  <footer class="section-divider py-10 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 rounded-md fk-gradient flex items-center justify-center"><i class="fa-solid fa-shirt text-white text-[10px]"></i></div>
+            <span class="font-heading font-bold text-sm"><span class="text-fk-purple">Fashion</span>Kas</span>
+          </div>
+          <p class="text-xs text-gray-600 leading-relaxed">Kasir digital + katalog online + WA automation khusus reseller fashion Indonesia.</p>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Produk</p>
+          <ul class="space-y-2 text-xs text-gray-600">
+            <li><a href="#fitur" class="hover:text-fk-purple transition">Fitur Utama</a></li>
+            <li><a href="/register" class="hover:text-fk-purple transition">Daftar Gratis</a></li>
+            <li><a href="/login" class="hover:text-fk-purple transition">Login</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Bantuan</p>
+          <ul class="space-y-2 text-xs text-gray-600">
+            <li><a href="https://wa.me/6281234567890" target="_blank" class="hover:text-green-400 transition"><i class="fa-brands fa-whatsapp mr-1"></i>Chat Support</a></li>
+            <li><span>Email: hello@fashionkas.id</span></li>
+          </ul>
+        </div>
       </div>
-      <p class="text-[10px] text-gray-700">2026 FashionKas. Katalog + Kasir Digital untuk Reseller Fashion Indonesia.</p>
+      <div class="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p class="text-[10px] text-gray-700">&copy; 2026 FashionKas. All rights reserved.</p>
+        <div class="flex items-center gap-3">
+          <span class="text-[10px] text-gray-700">v3.1</span>
+          <span class="text-[10px] text-gray-700">|</span>
+          <span class="text-[10px] text-gray-700">Built with <i class="fa-solid fa-heart text-red-500 text-[8px]"></i> di Indonesia</span>
+        </div>
+      </div>
     </div>
   </footer>
+
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20tanya%20tentang%20FashionKas" target="_blank"
+    class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg shadow-green-500/30 hover:scale-110 transition-transform"
+    title="Chat via WhatsApp">
+    <i class="fa-brands fa-whatsapp text-white text-2xl"></i>
+  </a>
 
   <script>
     window.addEventListener('scroll', function() {

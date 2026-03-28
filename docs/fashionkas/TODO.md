@@ -1,8 +1,18 @@
 # FASHIONKAS — TODO & EXECUTION TRACKER
 ## Layer 1: Task Board & Priority Matrix
-**Version**: 3.1 | **Date**: 26 Maret 2026 | **Status**: ACTIVE
+**Version**: 4.0 | **Date**: 28 Maret 2026 | **Status**: ACTIVE
 
 ---
+
+### Recent Completions (v3.1 - 28 Mar 2026)
+- [x] Subscription tier system + API routes
+- [x] Duitku payment placeholder
+- [x] Landing page v3.1 redesign (pain-first, WA widget, footer)
+- [x] Session handoff document
+- [x] Service worker v3.1
+- [x] Version bump all docs to v3.2
+- [x] Pain points section on landing
+- [x] Professional footer with links
 
 ## CURRENT STATUS
 

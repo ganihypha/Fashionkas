@@ -1,8 +1,17 @@
 # FASHIONKAS — DESIGN DOCUMENT
 ## Layer 1: UI/UX Design System & Brand Guidelines
-**Version**: 2.0 | **Date**: 26 Maret 2026 | **Status**: LIVE (Upgraded)
+**Version**: 2.1 | **Date**: 28 Maret 2026 | **Status**: LIVE v3.1
 
 ---
+
+### v2.1 Design Changes
+- Landing page redesigned with pain-first narrative flow
+- Added "Pain Points" section before features (red accent theme)
+- Professional 3-column footer with product/help links
+- WhatsApp floating action button (bottom-right, green pulse)
+- Version badge updated to v3.1
+- Subscription tier UI components defined
+- Improved footer SEO: copyright, version, "Built in Indonesia"
 
 ## 1. DESIGN PHILOSOPHY
 

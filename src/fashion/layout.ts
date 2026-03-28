@@ -1,5 +1,6 @@
-// FashionKas Layout Component v3.0
+// FashionKas Layout Component v3.1
 // DESIGN UPGRADE: Skeleton loading, smooth transitions, micro-interactions, better UX
+// Updated: 2026-03-28 - Rate limiting, subscription checks, improved auth flow
 // Core JS functions in <head> so all page scripts can use them.
 
 export function fashionLayout(title: string, content: string, activeNav?: string): string {

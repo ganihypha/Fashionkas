@@ -1,8 +1,18 @@
 # FASHIONKAS by SOVEREIGN — DEEP DIVE & DEEP RESEARCH MASTER DOCUMENT
 ## Current State, Business Context, Research Insights & Implementation Roadmap
-**Version**: 1.0 | **Date**: 25 Maret 2026 | **Status**: EXECUTION READY
+**Version**: 2.0 | **Date**: 28 Maret 2026 | **Status**: v3.1 LIVE + EXECUTION READY
 
 ---
+
+### v2.0 Deep Dive Updates (28 Mar 2026)
+- **Codebase**: 8,600+ LOC across 28 TS modules (up from 7,851)
+- **New Features**: Subscription tier system, Duitku payment placeholder, landing page v3.1
+- **New Docs**: SESSION_HANDOFF.md - comprehensive developer handoff document
+- **Architecture**: Added `/api/subscription/*` routes (5 endpoints)
+- **Landing**: Pain-first UX redesign with problem → solution → trust → action flow
+- **UI**: WA floating button, professional 3-column footer, pain points section
+- **Version**: All docs upgraded to v3.2/v4.0
+- **PMF Score**: 6.2/10 (unchanged - needs real users to improve)
 
 ## DAFTAR ISI
 

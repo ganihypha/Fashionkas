@@ -1,8 +1,17 @@
 # FASHIONKAS — PRODUCT REQUIREMENTS DOCUMENT (PRD)
 ## Layer 1: Brand Standalone untuk Fashion Reseller WA-First
-**Version**: 3.1 | **Date**: 26 Maret 2026 | **Status**: LIVE + DESIGN UPGRADED
+**Version**: 3.2 | **Date**: 28 Maret 2026 | **Status**: LIVE v3.1 + SUBSCRIPTION + PAYMENT PREP
 
 ---
+
+### What's New in v3.2
+- Subscription tier system (FREE/BASIC/PRO/ENTERPRISE) with API routes
+- Duitku payment gateway placeholder (ready for API key)
+- Landing page v3.1: pain-first copy, WA floating button, professional footer
+- Session handoff document for dev continuity
+- Pain points section on landing page
+- Service worker v3.1
+- 8,600+ LOC across 28 modules
 
 ## 1. EXECUTIVE SUMMARY
 

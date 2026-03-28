@@ -1,8 +1,17 @@
 # FASHIONKAS — ARCHITECTURE DOCUMENT
 ## Layer 1: Technical Architecture for Fashion Reseller Platform
-**Version**: 3.1 | **Date**: 26 Maret 2026 | **Status**: LIVE
+**Version**: 3.2 | **Date**: 28 Maret 2026 | **Status**: LIVE v3.1
 
 ---
+
+### v3.2 Architecture Changes
+- Added `/api/subscription/*` routes (5 endpoints: tiers, current, check-feature, create-payment, webhook)
+- Subscription tier definitions with feature gating (FREE/BASIC/PRO/ENTERPRISE)
+- Duitku payment gateway integration point (placeholder, needs API key)
+- Service worker upgraded to v3.1
+- Landing page rebuilt with pain-first UX, WA widget, professional footer
+- Session handoff system for developer continuity
+- Total codebase: ~8,600+ LOC, 28 TS modules, ~410 KB worker
 
 ## 1. SYSTEM OVERVIEW
 

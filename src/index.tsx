@@ -1,5 +1,6 @@
 // ============================================================
-// FashionKas v3.0 - Main Application Entry Point
+// FashionKas v3.1 - Main Application Entry Point
+// Updated: 2026-03-28
 // ============================================================
 // ARCHITECTURE (3-Layer Brand System):
 //   1. FashionKas  = Front brand (user-facing, fashion niche)
@@ -8,12 +9,17 @@
 //
 // All API routes under /api/* are ENGINE (ResellerKas) - niche-agnostic
 // All page routes under /fashionkas/* are FRONT (FashionKas) - fashion-specific
+//
+// SECURITY: All secrets in CF env vars (not wrangler.jsonc)
+// AUTH: JWT HS256 + SHA-256 PIN hash, 30-day expiry
+// RATE LIMITING: In-memory per-IP tracker for auth endpoints
 // ============================================================
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 
 // === ENGINE LAYER (ResellerKas) - API Routes ===
+import { subscriptionRoutes } from './routes/subscription'
 import { authRoutes } from './routes/auth'
 import { productRoutes } from './routes/products'
 import { orderRoutes } from './routes/orders'
@@ -93,7 +99,7 @@ app.get('/manifest.json', async (c) => {
 })
 
 app.get('/sw.js', async (c) => {
-  const sw = `const CACHE_NAME='fashionkas-v3.0';self.addEventListener('install',()=>{self.skipWaiting()});self.addEventListener('activate',(e)=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE_NAME).map(x=>caches.delete(x)))));self.clients.claim()});self.addEventListener('fetch',(e)=>{if(e.request.method!=='GET'||new URL(e.request.url).pathname.startsWith('/api/'))return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(CACHE_NAME).then(ca=>ca.put(e.request,c))}return r}).catch(()=>caches.match(e.request).then(c=>c||new Response('Offline',{status:503}))))});`;
+  const sw = `const CACHE_NAME='fashionkas-v3.1';self.addEventListener('install',()=>{self.skipWaiting()});self.addEventListener('activate',(e)=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE_NAME).map(x=>caches.delete(x)))));self.clients.claim()});self.addEventListener('fetch',(e)=>{if(e.request.method!=='GET'||new URL(e.request.url).pathname.startsWith('/api/'))return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(CACHE_NAME).then(ca=>ca.put(e.request,c))}return r}).catch(()=>caches.match(e.request).then(c=>c||new Response('Offline',{status:503}))))});`;
   return new Response(sw, { headers: { 'Content-Type': 'application/javascript', 'Cache-Control': 'no-cache' } })
 })
 
@@ -111,17 +117,20 @@ app.route('/api/reports', reportRoutes)
 app.route('/api/images', imageRoutes)
 app.route('/api/ai', aiRoutes)
 app.route('/api/webhook', webhookRoutes)
+app.route('/api/subscription', subscriptionRoutes)
 
 // Health & Meta
 app.get('/api/health', (c) => c.json({
   status: 'ok',
   app: 'FashionKas',
   engine: 'ResellerKas',
-  version: '3.0',
+  version: '3.1',
+  build: '2026-03-28',
   webhook: '/api/webhook/incoming',
   features: [
     'catalog', 'kasir', 'orders', 'customers', 'followup',
-    'wa-automation', 'r2-upload', 'fonnte-bot', 'ai-agents'
+    'wa-automation', 'r2-upload', 'fonnte-bot', 'ai-agents',
+    'subscription-tiers', 'rate-limiting', 'csv-export'
   ]
 }))
 
