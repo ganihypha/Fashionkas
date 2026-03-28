@@ -206,6 +206,8 @@ export function fashionLayout(title: string, content: string, activeNav?: string
           <a href="/fashionkas/scout" class="${activeNav === 'scout' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-binoculars mr-1"></i>Scout</a>
           <a href="/fashionkas/closer" class="${activeNav === 'closer' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-bullseye mr-1"></i>Closer</a>
           <a href="/fashionkas/reports" class="${activeNav === 'reports' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-chart-bar mr-1"></i>Laporan</a>
+          <a href="/fashionkas/customers" class="${activeNav === 'customers' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-users mr-1"></i>Pelanggan</a>
+          <a href="/fashionkas/followup" class="${activeNav === 'followup' ? 'active' : 'text-gray-400'}"><i class="fa-solid fa-bell mr-1 text-amber-400"></i>Follow-up</a>
         </div>
         <div class="flex items-center gap-3">
           <a href="/fashionkas/settings" class="text-xs text-gray-400 hover:text-white">
@@ -270,6 +272,14 @@ export function fashionLayout(title: string, content: string, activeNav?: string
           <a href="/fashionkas/settings" class="${activeNav === 'settings' ? 'text-fk-purple' : 'text-gray-300'}">
             <div class="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center"><i class="fa-solid fa-gear text-gray-400"></i></div>
             <div><p class="font-medium">Settings</p><p class="text-[10px] text-gray-500">Profil, PIN, ekspor</p></div>
+          </a>
+          <a href="/fashionkas/customers" class="${activeNav === 'customers' ? 'text-fk-purple' : 'text-gray-300'}">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center"><i class="fa-solid fa-users text-blue-400"></i></div>
+            <div><p class="font-medium">Pelanggan</p><p class="text-[10px] text-gray-500">Database customer</p></div>
+          </a>
+          <a href="/fashionkas/followup" class="${activeNav === 'followup' ? 'text-fk-purple' : 'text-gray-300'}">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center"><i class="fa-solid fa-bell text-amber-400"></i></div>
+            <div><p class="font-medium">Follow-up</p><p class="text-[10px] text-gray-500">Reminder & re-engage</p></div>
           </a>
         </div>
       </div>

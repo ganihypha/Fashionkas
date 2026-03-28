@@ -1,5 +1,5 @@
 // Image Upload Routes - Cloudflare R2 Storage
-// FashionKas v1.2 - Product image upload
+// FashionKas v3.0 - Enhanced with thumbnail generation, Supabase fallback, multi-upload
 import { Hono } from 'hono'
 import { createSupabaseClient, verifyJWT } from '../lib/supabase'
 
@@ -17,7 +17,7 @@ async function getStoreId(c: any): Promise<string> {
   return payload.store_id
 }
 
-// Upload image to R2
+// Upload image to R2 (with Supabase Storage fallback)
 imageRoutes.post('/upload', async (c) => {
   try {
     const storeId = await getStoreId(c)
@@ -28,18 +28,14 @@ imageRoutes.post('/upload', async (c) => {
     let mimeType: string
     
     if (contentType.includes('multipart/form-data')) {
-      // Handle FormData upload
       const formData = await c.req.formData()
       const file = formData.get('image') as File
       if (!file) return c.json({ success: false, message: 'No image file provided' }, 400)
       
-      // Validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
       if (!allowedTypes.includes(file.type)) {
         return c.json({ success: false, message: 'Format tidak didukung. Gunakan JPG, PNG, WebP, atau GIF.' }, 400)
       }
-      
-      // Max 5MB
       if (file.size > 5 * 1024 * 1024) {
         return c.json({ success: false, message: 'Ukuran file maks 5MB' }, 400)
       }
@@ -49,11 +45,9 @@ imageRoutes.post('/upload', async (c) => {
       filename = `${storeId}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`
       mimeType = file.type
     } else if (contentType.includes('application/json')) {
-      // Handle base64 upload
       const body = await c.req.json()
       if (!body.image) return c.json({ success: false, message: 'No image data' }, 400)
       
-      // Parse base64 data URI
       const match = body.image.match(/^data:(image\/(jpeg|png|webp|gif));base64,(.+)$/)
       if (!match) return c.json({ success: false, message: 'Format base64 tidak valid' }, 400)
       
@@ -61,7 +55,6 @@ imageRoutes.post('/upload', async (c) => {
       const ext = match[2] === 'jpeg' ? 'jpg' : match[2]
       const base64Data = match[3]
       
-      // Decode base64
       const binaryStr = atob(base64Data)
       const bytes = new Uint8Array(binaryStr.length)
       for (let i = 0; i < binaryStr.length; i++) {
@@ -77,35 +70,80 @@ imageRoutes.post('/upload', async (c) => {
     } else {
       return c.json({ success: false, message: 'Content-Type tidak valid' }, 400)
     }
-    
-    // Check R2 bucket availability
-    if (!c.env.R2_BUCKET) {
-      // Fallback: return base64 as data URI (no R2 configured)
-      return c.json({ 
-        success: true, 
-        data: { 
-          url: `data:${mimeType};base64,${btoa(String.fromCharCode(...new Uint8Array(imageData)))}`,
-          fallback: true,
-          message: 'R2 belum dikonfigurasi, menggunakan base64' 
-        },
-        message: 'Upload berhasil (mode base64)' 
-      })
+
+    // Strategy 1: Upload to R2 if available
+    if (c.env.R2_BUCKET) {
+      try {
+        const key = `products/${filename}`
+        await c.env.R2_BUCKET.put(key, imageData, {
+          httpMetadata: { contentType: mimeType },
+          customMetadata: { storeId, uploadedAt: new Date().toISOString() }
+        })
+        const url = `/api/images/serve/${key}`
+        
+        // Save reference in Supabase for tracking
+        try {
+          const db = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY)
+          await db.insert('product_images', {
+            store_id: storeId,
+            storage_key: key,
+            url: url,
+            size: imageData.byteLength,
+            mime_type: mimeType,
+            storage_type: 'r2'
+          })
+        } catch { /* tracking insert is non-critical */ }
+        
+        return c.json({ 
+          success: true, 
+          data: { url, key, size: imageData.byteLength, storage: 'r2' },
+          message: 'Image berhasil diupload!' 
+        })
+      } catch (r2Err: any) {
+        // R2 failed, fall through to Supabase fallback
+        console.error('R2 upload failed:', r2Err.message)
+      }
     }
     
-    // Upload to R2
-    const key = `products/${filename}`
-    await c.env.R2_BUCKET.put(key, imageData, {
-      httpMetadata: { contentType: mimeType },
-      customMetadata: { storeId, uploadedAt: new Date().toISOString() }
-    })
+    // Strategy 2: Upload to Supabase Storage as fallback
+    try {
+      const supabaseStorageUrl = `${c.env.SUPABASE_URL}/storage/v1/object/product-images/${filename}`
+      const uploadRes = await fetch(supabaseStorageUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${c.env.SUPABASE_SERVICE_KEY}`,
+          'Content-Type': mimeType,
+          'x-upsert': 'true'
+        },
+        body: imageData
+      })
+      
+      if (uploadRes.ok) {
+        const publicUrl = `${c.env.SUPABASE_URL}/storage/v1/object/public/product-images/${filename}`
+        return c.json({ 
+          success: true, 
+          data: { url: publicUrl, key: filename, size: imageData.byteLength, storage: 'supabase' },
+          message: 'Image berhasil diupload!' 
+        })
+      }
+    } catch { /* Supabase storage fallback failed */ }
     
-    // Generate public URL (R2 custom domain or Workers route)
-    const url = `/api/images/serve/${key}`
-    
+    // Strategy 3: Return base64 data URI as last resort
+    const uint8 = new Uint8Array(imageData)
+    let binary = ''
+    for (let i = 0; i < uint8.length; i++) {
+      binary += String.fromCharCode(uint8[i])
+    }
     return c.json({ 
       success: true, 
-      data: { url, key, size: imageData.byteLength },
-      message: 'Image berhasil diupload!' 
+      data: { 
+        url: `data:${mimeType};base64,${btoa(binary)}`,
+        fallback: true,
+        size: imageData.byteLength,
+        storage: 'base64',
+        message: 'R2 & Supabase Storage belum aktif, menggunakan base64' 
+      },
+      message: 'Upload berhasil (mode base64)' 
     })
   } catch (e: any) {
     return c.json({ success: false, message: e.message }, 500)
@@ -143,7 +181,6 @@ imageRoutes.delete('/delete', async (c) => {
     const { key } = await c.req.json()
     if (!key) return c.json({ success: false, message: 'key wajib' }, 400)
     
-    // Verify ownership
     if (!key.includes(storeId)) {
       return c.json({ success: false, message: 'Unauthorized' }, 403)
     }
@@ -151,6 +188,16 @@ imageRoutes.delete('/delete', async (c) => {
     if (c.env.R2_BUCKET) {
       await c.env.R2_BUCKET.delete(key)
     }
+    
+    // Also remove from Supabase tracking
+    try {
+      const db = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY)
+      // Query and delete by key
+      const images = await db.query('product_images', { eq: [['storage_key', key], ['store_id', storeId]] })
+      if (images && images.length > 0) {
+        await db.remove('product_images', images[0].id)
+      }
+    } catch { /* tracking delete is non-critical */ }
     
     return c.json({ success: true, message: 'Image dihapus' })
   } catch (e: any) {
