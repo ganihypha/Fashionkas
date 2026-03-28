@@ -1,17 +1,20 @@
 # FASHIONKAS — ARCHITECTURE DOCUMENT
 ## Layer 1: Technical Architecture for Fashion Reseller Platform
-**Version**: 3.2 | **Date**: 28 Maret 2026 | **Status**: LIVE v3.1
+**Version**: 3.3 | **Date**: 28 Maret 2026 | **Status**: LIVE v3.1
 
 ---
 
-### v3.2 Architecture Changes
+### v3.3 Architecture Changes (28 Mar 2026)
+- **R2 S3 Endpoint documented**: `https://618d52f63c689422eacf6638436c3e8b.r2.cloudflarestorage.com`
+- **Cloudflare API Token documented** for deployment automation
+- **Supabase integration deep-dive**: custom REST client, auth flow, data relationships
+- **Product offerings & subscription tiers**: FREE/BASIC/PRO/ENTERPRISE with feature matrix
 - Added `/api/subscription/*` routes (5 endpoints: tiers, current, check-feature, create-payment, webhook)
-- Subscription tier definitions with feature gating (FREE/BASIC/PRO/ENTERPRISE)
 - Duitku payment gateway integration point (placeholder, needs API key)
 - Service worker upgraded to v3.1
 - Landing page rebuilt with pain-first UX, WA widget, professional footer
-- Session handoff system for developer continuity
-- Total codebase: ~8,600+ LOC, 28 TS modules, ~410 KB worker
+- Session handoff system v3.0 for developer continuity
+- Total codebase: ~8,907 LOC, 28 TS modules, 59 files, ~428 KB worker
 
 ## 1. SYSTEM OVERVIEW
 
@@ -20,23 +23,27 @@ INTERNET / USERS (HP Android, browser Chrome)
          │
          ▼
 fashionkas.pages.dev (Cloudflare Pages Edge)
-┌─────────────────────────────────────────┐
-│  Hono v4 + TypeScript (_worker.js 404KB)│
-│  ┌──────────────┐  ┌─────────────────┐ │
-│  │  API Routes   │  │ Page Routes SSR │ │
-│  │  /api/* (30+) │  │ / + /fashionkas │ │
-│  │  REST + JSON  │  │ /catalog/:slug  │ │
-│  └──────┬────────┘  └─────────────────┘ │
-└─────────┼───────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│  Hono v4 + TypeScript (_worker.js 428KB)    │
+│  ┌──────────────┐  ┌─────────────────┐      │
+│  │  API Routes   │  │ Page Routes SSR │      │
+│  │  /api/* (31+) │  │ / + /fashionkas │      │
+│  │  REST + JSON  │  │ /catalog/:slug  │      │
+│  └──────┬────────┘  └─────────────────┘      │
+└─────────┼────────────────────────────────────┘
           │
-┌─────────▼───────────────────────────────┐
-│  EXTERNAL SERVICES                       │
-│  ┌──────────┐ ┌────────┐ ┌──────┐      │
-│  │ Supabase │ │ Fonnte │ │  R2  │      │
-│  │ Postgres │ │ WA API │ │Bucket│      │
-│  │  6 tables│ │  Bot   │ │Images│      │
-│  └──────────┘ └────────┘ └──────┘      │
-└──────────────────────────────────────────┘
+┌─────────▼────────────────────────────────────┐
+│  EXTERNAL SERVICES                            │
+│  ┌──────────┐ ┌────────┐ ┌──────────────┐   │
+│  │ Supabase │ │ Fonnte │ │ Cloudflare   │   │
+│  │ Postgres │ │ WA API │ │ R2 Storage   │   │
+│  │  6 tables│ │  Bot   │ │ S3 endpoint  │   │
+│  │  REST API│ │  Webhk │ │ Images/Files │   │
+│  └──────────┘ └────────┘ └──────────────┘   │
+│                                               │
+│  Cloudflare Account: 618d52f63c...            │
+│  R2 S3: https://618d52f6...r2.cloudflare...   │
+└───────────────────────────────────────────────┘
 ```
 
 ---
@@ -133,36 +140,77 @@ src/
 
 ---
 
-## 5. SECURITY
+## 5. CLOUDFLARE INFRASTRUCTURE
+
+### 5.1 Account & Services
+
+| Item | Value |
+|------|-------|
+| **Account ID** | `618d52f63c689422eacf6638436c3e8b` |
+| **Pages Project** | `fashionkas` |
+| **Production URL** | https://fashionkas.pages.dev |
+| **API Token** | `yvImquSdjXBLj1gS4mij0vIWBqg4771HdHAP_mbD` |
+| **R2 S3 Endpoint** | `https://618d52f63c689422eacf6638436c3e8b.r2.cloudflarestorage.com` |
+| **Compatibility** | 2024-01-01 + nodejs_compat |
+
+### 5.2 R2 Object Storage
+
+```
+Image Upload Flow:
+  User → POST /api/images/upload (multipart/base64)
+    → Verify JWT + store ownership
+    → Validate type (jpeg/png/webp/gif) + size (<=5MB)
+    → Generate unique filename
+    → Strategy 1: R2 bucket PUT + track in Supabase
+    → Strategy 2: Supabase Storage fallback
+    → Strategy 3: Base64 data URI (last resort)
+    → Return { url, key, size, storage_type }
+
+Image Serve Flow:
+  Browser → GET /api/images/serve/{key}
+    → R2 bucket GET
+    → Set Content-Type + Cache-Control headers
+    → Stream image response
+```
+
+---
+
+## 6. SECURITY
 
 | Layer | Implementation |
 |-------|---------------|
 | Auth | Custom JWT (HS256, 30-day) |
-| PIN | SHA-256 + salt |
-| HTTPS | Cloudflare auto |
-| CORS | /api/* routes |
+| PIN | SHA-256 + project-specific salt |
+| HTTPS | Cloudflare auto-HTTPS |
+| CORS | /api/* routes only |
 | Secrets | CF Secrets (prod), .dev.vars (local) |
 | RLS | Supabase Row Level Security |
+| Tenant | store_id from JWT scopes all queries |
 
 ### KNOWN SECURITY DEBT:
-- Supabase keys visible in wrangler.jsonc vars (should be CF Secrets)
+- Supabase keys may be visible in git history (need rotation)
 - No rate limiting on /api/auth/* (brute force risk)
 - Single Fontte token shared across all stores
+- Cloudflare API token should be rotated periodically
 
 ---
 
-## 6. BUILD & DEPLOY
+## 7. BUILD & DEPLOY
 
 ```
-Build:   src/ → Vite → dist/ (_worker.js 404KB + _routes.json + static/)
+Build:   src/ → Vite → dist/ (_worker.js 428KB + _routes.json + static/)
 Local:   npm run build && wrangler pages dev dist --ip 0.0.0.0 --port 3000
 Prod:    npm run build && wrangler pages deploy dist --project-name fashionkas
 URL:     https://fashionkas.pages.dev
+
+Token Verify:
+  curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+    -H "Authorization: Bearer yvImquSdjXBLj1gS4mij0vIWBqg4771HdHAP_mbD"
 ```
 
 ---
 
-## 7. PERFORMANCE
+## 8. PERFORMANCE
 
 | Metric | Target | Current |
 |--------|--------|---------|
@@ -174,7 +222,40 @@ URL:     https://fashionkas.pages.dev
 
 ---
 
-## 8. DESIGN SYSTEM (NEW v3.1)
+## 9. SUPABASE INTEGRATION DETAILS
+
+### REST Client Architecture
+```typescript
+// src/lib/supabase.ts — Custom lightweight Supabase REST client
+createSupabaseClient(url, key) → {
+  query(table, { select, eq, order, limit, single })
+  insert(table, data)
+  update(table, data, filters)
+  remove(table, filters)
+  rpc(functionName, params)
+}
+```
+
+### JWT Utilities
+```typescript
+createJWT(payload, secret)  → HS256 token (30-day expiry)
+verifyJWT(token, secret)    → decoded payload or throw
+hashPin(pin)                → SHA-256(pin + salt) → base64
+```
+
+### Multi-Tenant Data Flow
+```
+Request → Extract Bearer token
+       → verifyJWT(token, JWT_SECRET)
+       → Extract store_id from payload
+       → createSupabaseClient(SUPABASE_URL, SERVICE_KEY)
+       → All queries: .eq('store_id', store_id)
+       → Response (scoped to tenant)
+```
+
+---
+
+## 10. DESIGN SYSTEM (v3.1)
 
 ### Color Tokens:
 - Primary: `#A855F7` (purple), Dark: `#7C3AED`, Light: `#C084FC`
@@ -192,5 +273,29 @@ URL:     https://fashionkas.pages.dev
 
 ---
 
-**FashionKas Architecture v3.1 | 26 Maret 2026**
+---
+
+## 11. PRODUCT OFFERINGS
+
+### Subscription Tier Matrix
+
+| Tier | Price | Products | Orders | Customers | Key Features |
+|------|-------|----------|--------|-----------|-------------|
+| **BETA** | Rp 0 | 999 | 999 | 999 | Full access (beta period) |
+| **BASIC** | Rp 49-99K | 200 | 500 | 500 | Core + priority support |
+| **PRO** | Rp 149-249K | 1000 | 5000 | 5000 | + broadcast, multi-admin, reports |
+| **ENTERPRISE** | Rp 499K | Unlimited | Unlimited | Unlimited | + multi-store, custom domain |
+
+### API Endpoints for Subscriptions
+```
+GET  /api/subscription/tiers          → List all tiers
+GET  /api/subscription/current        → Current store tier
+POST /api/subscription/check-feature  → Feature gating
+POST /api/subscription/create-payment → Duitku (placeholder)
+POST /api/subscription/webhook/duitku → Payment callback
+```
+
+---
+
+**FashionKas Architecture v3.3 | 28 Maret 2026**
 **Document**: docs/fashionkas/ARCHITECTURE.md

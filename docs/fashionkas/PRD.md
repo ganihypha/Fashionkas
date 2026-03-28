@@ -1,17 +1,20 @@
 # FASHIONKAS — PRODUCT REQUIREMENTS DOCUMENT (PRD)
 ## Layer 1: Brand Standalone untuk Fashion Reseller WA-First
-**Version**: 3.2 | **Date**: 28 Maret 2026 | **Status**: LIVE v3.1 + SUBSCRIPTION + PAYMENT PREP
+**Version**: 3.3 | **Date**: 28 Maret 2026 | **Status**: LIVE v3.1 + SUBSCRIPTION + PAYMENT PREP + INFRA DOCS
 
 ---
 
-### What's New in v3.2
+### What's New in v3.3
+- **Cloudflare R2 S3 endpoint documented**: `https://618d52f63c689422eacf6638436c3e8b.r2.cloudflarestorage.com`
+- **Cloudflare API token documented** for deployment automation
+- **Supabase integration deep-dive**: custom REST client, auth flow, data relationships
+- **Product offerings detailed**: 4 subscription tiers with feature matrix
+- **Session handoff v3.0**: comprehensive developer continuity document (20K+ chars)
+- **Uploaded artifacts analyzed**: 25+ research files, strategic insights consolidated
 - Subscription tier system (FREE/BASIC/PRO/ENTERPRISE) with API routes
 - Duitku payment gateway placeholder (ready for API key)
 - Landing page v3.1: pain-first copy, WA floating button, professional footer
-- Session handoff document for dev continuity
-- Pain points section on landing page
-- Service worker v3.1
-- 8,600+ LOC across 28 modules
+- 8,907 LOC across 28 TS modules, 59 files, 428 KB worker
 
 ## 1. EXECUTIVE SUMMARY
 
@@ -23,7 +26,7 @@
 ### Status: LIVE
 - **URL**: https://fashionkas.pages.dev
 - **Version**: v2.5 → v3.0 (design upgrade)
-- **Codebase**: 7,914 baris kode, 52 modules, 403 KB worker
+- **Codebase**: 8,907 baris kode, 59 files, 428 KB worker
 - **MRR**: Rp 0 (pre-revenue)
 - **Users**: 0 real active
 - **PMF Score**: 6.2/10 → target 8/10
@@ -224,5 +227,35 @@ Setelah minimal **10 pilot users** aktif selama 14+ hari.
 
 ---
 
-**FashionKas PRD v3.1 | 26 Maret 2026**
+## 11. CLOUDFLARE INFRASTRUCTURE
+
+| Service | Endpoint |
+|---------|----------|
+| **Pages** | https://fashionkas.pages.dev |
+| **Account ID** | `618d52f63c689422eacf6638436c3e8b` |
+| **R2 S3 Endpoint** | `https://618d52f63c689422eacf6638436c3e8b.r2.cloudflarestorage.com` |
+| **API Token** | `yvImquSdjXBLj1gS4mij0vIWBqg4771HdHAP_mbD` |
+
+---
+
+## 12. SUPABASE INTEGRATION
+
+| Component | Detail |
+|-----------|--------|
+| **Project URL** | `https://pavkyexnqzfmdrbfzoht.supabase.co` |
+| **Tables** | 6 (stores, products, orders, order_items, customers, wa_messages) |
+| **RLS** | Enabled on all tables |
+| **Client** | Custom lightweight REST client (src/lib/supabase.ts) |
+| **Auth** | JWT + SHA-256 PIN hash (no Supabase Auth - custom implementation) |
+| **Multi-Tenant** | store_id scoping via JWT payload on all queries |
+
+### Key Integration Patterns:
+- **Per-request client**: `createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY)`
+- **No persistent connections**: Workers are stateless
+- **Service role key**: Bypasses RLS for backend operations
+- **Anon key**: Used for public catalog endpoint only
+
+---
+
+**FashionKas PRD v3.3 | 28 Maret 2026**
 **Document**: docs/fashionkas/PRD.md

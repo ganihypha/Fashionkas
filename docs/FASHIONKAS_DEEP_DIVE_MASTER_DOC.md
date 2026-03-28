@@ -1,18 +1,22 @@
 # FASHIONKAS by SOVEREIGN — DEEP DIVE & DEEP RESEARCH MASTER DOCUMENT
 ## Current State, Business Context, Research Insights & Implementation Roadmap
-**Version**: 2.0 | **Date**: 28 Maret 2026 | **Status**: v3.1 LIVE + EXECUTION READY
+**Version**: 3.0 | **Date**: 28 Maret 2026 | **Status**: v3.1 LIVE + EXECUTION READY
 
 ---
 
-### v2.0 Deep Dive Updates (28 Mar 2026)
-- **Codebase**: 8,600+ LOC across 28 TS modules (up from 7,851)
+### v3.0 Deep Dive Updates (28 Mar 2026)
+- **Codebase**: 8,907 LOC across 28 TS modules, 59 files (up from 8,600)
+- **Cloudflare R2 S3 Endpoint**: `https://618d52f63c689422eacf6638436c3e8b.r2.cloudflarestorage.com`
+- **Cloudflare API Token**: Documented for deployment automation
+- **Supabase Integration**: Detailed custom REST client, auth flow, multi-tenant architecture
+- **Product Offerings**: 4-tier subscription model (BETA/BASIC/PRO/ENTERPRISE)
+- **Session Handoff v3.0**: Comprehensive 20K+ char developer continuity document
+- **Uploaded Artifacts**: 25+ research files analyzed, strategic insights consolidated
 - **New Features**: Subscription tier system, Duitku payment placeholder, landing page v3.1
-- **New Docs**: SESSION_HANDOFF.md - comprehensive developer handoff document
 - **Architecture**: Added `/api/subscription/*` routes (5 endpoints)
 - **Landing**: Pain-first UX redesign with problem → solution → trust → action flow
 - **UI**: WA floating button, professional 3-column footer, pain points section
-- **Version**: All docs upgraded to v3.2/v4.0
-- **PMF Score**: 6.2/10 (unchanged - needs real users to improve)
+- **PMF Score**: 6.2/10 (unchanged — needs real users to improve)
 
 ## DAFTAR ISI
 
@@ -48,8 +52,8 @@
 |------|--------|--------|
 | **Production URL** | LIVE | https://fashionkas.pages.dev |
 | **GitHub** | UPDATED | https://github.com/ganihypha/Fashionkas |
-| **Version** | v2.5 | 7,851 baris kode, 52 modules |
-| **Pages** | 13 halaman | Semua HTTP 200, 0 JS errors |
+| **Version** | v3.1 | 8,907 baris kode, 59 files, 428 KB worker |
+| **Pages** | 16 halaman | Semua HTTP 200, 0 JS errors |
 | **API Endpoints** | 30+ | Auth, Products, Orders, WA, Dashboard, Reports, AI, Webhook |
 | **Database** | Supabase | 6 tables, RLS enabled |
 | **WhatsApp** | Fonnte | Connected, 985 quota, Free plan |
@@ -738,6 +742,8 @@ Target 30 hari:
 | **Fonnte Webhook** | https://fashionkas.pages.dev/api/webhook/incoming | Active |
 | **Cloudflare Account** | 618d52f63c689422eacf6638436c3e8b | Active |
 | **R2 Bucket** | Via Cloudflare R2 binding | Active |
+| **R2 S3 Endpoint** | `https://618d52f63c689422eacf6638436c3e8b.r2.cloudflarestorage.com` | Active |
+| **CF API Token** | `yvImquSdjXBLj1gS4mij0vIWBqg4771HdHAP_mbD` | Active |
 
 ### 13.2 Fonnte Setup Guide
 
@@ -837,5 +843,5 @@ FashionKas v2.5 adalah **produk yang sudah fungsional 85%** dengan 13 halaman, 3
 *Powered by Sovereign Engine*
 
 **Document**: FASHIONKAS_DEEP_DIVE_MASTER_DOC.md
-**Version**: 1.0 | **Date**: 25 Maret 2026
-**Sources**: 16 research files analyzed + full codebase audit + 19 git commits reviewed
+**Version**: 3.0 | **Date**: 28 Maret 2026
+**Sources**: 25+ research files analyzed + full codebase audit + 20+ git commits reviewed
