@@ -18,6 +18,25 @@ export function reportsPage(): string {
       </div>
     </div>
 
+    <!-- CSV Export Buttons -->
+    <div class="glass-card rounded-xl p-4 fk-border">
+      <h2 class="font-heading font-bold text-xs mb-3"><i class="fa-solid fa-download text-green-400 mr-2"></i>Export CSV</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <button onclick="downloadCSV('orders')" class="py-2.5 rounded-xl bg-fk-purple/5 text-fk-purple text-xs font-medium border border-fk-purple/10 hover:bg-fk-purple/10 transition-all">
+          <i class="fa-solid fa-box mr-1"></i>Pesanan
+        </button>
+        <button onclick="downloadCSV('products')" class="py-2.5 rounded-xl bg-green-500/5 text-green-400 text-xs font-medium border border-green-500/10 hover:bg-green-500/10 transition-all">
+          <i class="fa-solid fa-shirt mr-1"></i>Produk
+        </button>
+        <button onclick="downloadCSV('customers')" class="py-2.5 rounded-xl bg-blue-500/5 text-blue-400 text-xs font-medium border border-blue-500/10 hover:bg-blue-500/10 transition-all">
+          <i class="fa-solid fa-users mr-1"></i>Pelanggan
+        </button>
+        <button onclick="downloadCSV('daily')" class="py-2.5 rounded-xl bg-amber-500/5 text-amber-400 text-xs font-medium border border-amber-500/10 hover:bg-amber-500/10 transition-all">
+          <i class="fa-solid fa-calendar mr-1"></i>Rekap Harian
+        </button>
+      </div>
+    </div>
+
     <div id="reportData">
       <div class="text-center py-12"><i class="fa-solid fa-spinner fa-spin text-fk-purple text-xl"></i><p class="text-xs text-gray-500 mt-2">Memuat laporan...</p></div>
     </div>
@@ -269,6 +288,27 @@ export function reportsPage(): string {
     }
 
     loadReport();
+
+    async function downloadCSV(type) {
+      var month = document.getElementById('monthPicker').value;
+      var url = '/api/reports/export/' + type;
+      if (month && (type === 'orders' || type === 'daily')) url += '?month=' + month;
+      try {
+        showToast('Generating CSV...', 'info');
+        var token = getToken();
+        var res = await fetch(url, { headers: token ? { 'Authorization': 'Bearer ' + token } : {} });
+        if (!res.ok) throw new Error('Export gagal');
+        var blob = await res.blob();
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        var disp = res.headers.get('Content-Disposition') || '';
+        var match = disp.match(/filename="(.+)"/);
+        a.download = match ? match[1] : 'fashionkas_' + type + '.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('CSV berhasil didownload!');
+      } catch(e) { showToast('Gagal export: ' + e.message, 'error'); }
+    }
   </script>`
   
   return fashionLayout('Laporan', content, 'reports')

@@ -1,6 +1,6 @@
 // ============================================================
-// FashionKas v3.1 - Main Application Entry Point
-// Updated: 2026-03-28
+// FashionKas v3.2 - Main Application Entry Point
+// Updated: 2026-03-29
 // ============================================================
 // ARCHITECTURE (3-Layer Brand System):
 //   1. FashionKas  = Front brand (user-facing, fashion niche)
@@ -30,6 +30,7 @@ import { reportRoutes } from './routes/reports'
 import { imageRoutes } from './routes/images'
 import { aiRoutes } from './routes/ai'
 import { webhookRoutes } from './routes/webhook'
+import { referralRoutes } from './routes/referral'
 
 // === FRONT LAYER (FashionKas) - Page Views ===
 import { fashionLayout } from './fashion/layout'
@@ -48,6 +49,7 @@ import { closerAgentPage } from './fashion/pages/closer-agent'
 import { onboardingPage } from './fashion/pages/onboarding'
 import { customersPage } from './fashion/pages/customers'
 import { followupPage } from './fashion/pages/followup'
+import { referralPage } from './fashion/pages/referral'
 
 // === TYPE DEFINITIONS ===
 type Bindings = {
@@ -118,19 +120,20 @@ app.route('/api/images', imageRoutes)
 app.route('/api/ai', aiRoutes)
 app.route('/api/webhook', webhookRoutes)
 app.route('/api/subscription', subscriptionRoutes)
+app.route('/api/referral', referralRoutes)
 
 // Health & Meta
 app.get('/api/health', (c) => c.json({
   status: 'ok',
   app: 'FashionKas',
   engine: 'ResellerKas',
-  version: '3.1',
-  build: '2026-03-28',
+  version: '3.2',
+  build: '2026-03-29',
   webhook: '/api/webhook/incoming',
   features: [
     'catalog', 'kasir', 'orders', 'customers', 'followup',
     'wa-automation', 'r2-upload', 'fonnte-bot', 'ai-agents',
-    'subscription-tiers', 'rate-limiting', 'csv-export'
+    'subscription-tiers', 'rate-limiting', 'csv-export', 'referral-system'
   ]
 }))
 
@@ -157,6 +160,7 @@ app.get('/fashionkas/reports', (c) => c.html(reportsPage()))
 app.get('/fashionkas/scout', (c) => c.html(scoutAgentPage()))
 app.get('/fashionkas/closer', (c) => c.html(closerAgentPage()))
 app.get('/fashionkas/onboarding', (c) => c.html(onboardingPage()))
+app.get('/fashionkas/referral', (c) => c.html(referralPage()))
 
 // Public catalog (no auth required)
 app.get('/catalog/:slug', (c) => {
