@@ -1,5 +1,5 @@
 # FashionKas — Master Session Handoff
-## Version 3.0 | 28 Maret 2026 | STATUS: ACTIVE
+## Version 3.2 | 29 Maret 2026 | STATUS: ACTIVE
 
 ---
 
@@ -12,9 +12,9 @@
 | **Live URL** | https://fashionkas.pages.dev |
 | **GitHub** | https://github.com/ganihypha/Fashionkas |
 | **Branch** | `main` |
-| **Version** | v3.1 |
-| **LOC** | ~8,907 (28 TS modules, 59 files) |
-| **Build Size** | ~428 KB worker |
+| **Version** | v3.2 |
+| **LOC** | ~9,500+ (29 TS modules, 61 files) |
+| **Build Size** | ~458 KB worker |
 | **Status** | Pre-revenue, 0 active users, PMF 6.2/10 |
 | **Architecture** | 3-Layer: FashionKas (front) → ResellerKas (engine) → Sovereign (strategy) |
 
@@ -33,8 +33,8 @@
 | **Build** | Vite + @hono/vite-cloudflare-pages |
 | **Deploy** | Cloudflare Pages (wrangler pages deploy) |
 | **Dev Server** | PM2 + wrangler pages dev |
-| **AI** | Scout (lead scoring), Closer (WA outreach) — 50% done |
-| **PWA** | Service Worker v3.1, install prompt, offline fallback |
+| **AI** | Scout (lead scoring), Closer (WA outreach) — 80% done |
+| **PWA** | Service Worker v3.2, install prompt, offline fallback |
 
 ---
 

@@ -1,8 +1,20 @@
 # FASHIONKAS — TODO & EXECUTION TRACKER
 ## Layer 1: Task Board & Priority Matrix
-**Version**: 4.1 | **Date**: 28 Maret 2026 | **Status**: ACTIVE
+**Version**: 4.2 | **Date**: 29 Maret 2026 | **Status**: ACTIVE
 
 ---
+
+### Recent Completions (v3.2 — 29 Mar 2026)
+- [x] CSV Export system (4 types: orders, products, customers, daily recap)
+- [x] Referral System API routes (/api/referral/info, /validate, /leaderboard)
+- [x] Referral Page UI (/fashionkas/referral)
+- [x] Reports page upgraded with CSV download buttons
+- [x] Referral milestone rewards (30d free, BASIC 3mo, PRO 3mo, Lifetime)
+- [x] Navigation updated (Referral added to desktop + mobile)
+- [x] Instagram Master Strategy document analyzed and integrated
+- [x] Carousel Instagram content blueprint extracted (7 slides)
+- [x] Version bumped to v3.2 (57 modules, 458 KB)
+- [x] Deployed to production: fashionkas.pages.dev v3.2 LIVE
 
 ### Recent Completions (v3.1 — 28 Mar 2026)
 - [x] Subscription tier system + API routes
@@ -26,8 +38,8 @@
 
 | Indicator | Value |
 |-----------|-------|
-| **App Version** | v3.0 (design upgraded) |
-| **Worker Size** | 428 KB |
+| **App Version** | v3.2 (CSV + Referral) |
+| **Worker Size** | 458 KB |
 | **Total LOC** | 8,907 |
 | **Features** | 90% complete (UI), 70% backend |
 | **Bug Status** | All critical bugs fixed |
