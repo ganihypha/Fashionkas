@@ -13,6 +13,11 @@ export const authRoutes = new Hono<{ Bindings: Bindings }>()
 // Register new store
 authRoutes.post('/register', async (c) => {
   try {
+    // Guard: ensure env vars are available
+    if (!c.env.SUPABASE_URL || !c.env.SUPABASE_SERVICE_KEY || !c.env.JWT_SECRET) {
+      return c.json({ success: false, message: 'Server configuration error. Please contact admin.' }, 503)
+    }
+    
     const { store_name, owner_name, phone, pin, city, description } = await c.req.json()
     if (!store_name || !owner_name || !phone || !pin) {
       return c.json({ success: false, message: 'Semua field wajib diisi' }, 400)
@@ -59,6 +64,11 @@ authRoutes.post('/register', async (c) => {
 // Login with phone + PIN
 authRoutes.post('/login', async (c) => {
   try {
+    // Guard: ensure env vars are available
+    if (!c.env.SUPABASE_URL || !c.env.SUPABASE_SERVICE_KEY || !c.env.JWT_SECRET) {
+      return c.json({ success: false, message: 'Server configuration error. Please contact admin.' }, 503)
+    }
+    
     const { phone, pin } = await c.req.json()
     if (!phone || !pin) {
       return c.json({ success: false, message: 'Phone dan PIN wajib diisi' }, 400)
